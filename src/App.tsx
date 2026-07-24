@@ -6,6 +6,7 @@ import { LandingPage } from '@/pages/LandingPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
 import { TasksPage } from '@/pages/TasksPage'
+import { HabitsPage } from '@/pages/HabitsPage'
 import { SessionPage } from '@/pages/SessionPage'
 import { SettingsPage } from '@/pages/SettingsPage'
 import { NotFoundPage } from '@/pages/NotFoundPage'
@@ -29,6 +30,7 @@ export function App() {
           >
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/tasks" element={<TasksPage />} />
+            <Route path="/habits" element={<HabitsPage />} />
             <Route path="/session/:id" element={<SessionPage />} />
             <Route path="/settings" element={<SettingsPage />} />
           </Route>
