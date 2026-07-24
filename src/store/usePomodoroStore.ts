@@ -30,11 +30,11 @@ const defaultSettings: PomodoroSettings = {
 }
 
 const defaultStats: PomodoroStats = {
-  todayFocusSessions: 3,
-  totalFocusSessions: 18,
-  totalFocusMinutes: 450,
+  todayFocusSessions: 0,
+  totalFocusSessions: 0,
+  totalFocusMinutes: 0,
   currentCycle: 1,
-  streakDays: 4,
+  streakDays: 0,
   lastSessionDate: new Date().toISOString().split('T')[0],
 }
 

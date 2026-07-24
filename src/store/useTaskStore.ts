@@ -22,46 +22,10 @@ const initialFilters: TaskFilterOptions = {
   sortOrder: 'asc',
 }
 
-const defaultSeedTasks: Task[] = [
-  {
-    id: 'task-1',
-    title: 'Review Roman History Flashcards',
-    description: 'Go through 12 active recall flashcards on Roman Empire history.',
-    priority: 'high',
-    category: 'revision',
-    dueDate: new Date().toISOString().split('T')[0],
-    completed: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 'task-2',
-    title: 'Complete Quantum Physics Self-Quiz',
-    description: 'Take 5 multiple choice comprehension questions on wave-particle duality.',
-    priority: 'urgent',
-    category: 'quiz',
-    dueDate: new Date().toISOString().split('T')[0],
-    completed: false,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: 'task-3',
-    title: 'Summarize Organic Chemistry Reactions',
-    description: 'Paste chapter 4 notes into Cortez to extract key topics.',
-    priority: 'medium',
-    category: 'study',
-    dueDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
-    completed: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-]
-
 export const useTaskStore = create<TaskState>()(
   persist(
     (set) => ({
-      tasks: defaultSeedTasks,
+      tasks: [],
       filters: initialFilters,
 
       addTask: (taskData) => {

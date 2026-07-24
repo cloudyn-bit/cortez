@@ -1,16 +1,19 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { User, Session } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase/client'
+
+export interface MockUser {
+  id: string
+  email: string
+  user_metadata: {
+    full_name: string
+  }
+}
 
 interface AuthContextType {
-  user: User | null
-  session: Session | null
+  user: MockUser | null
   loading: boolean
   isDemoUser: boolean
-  signInWithMagicLink: (email: string) => Promise<{ error: Error | null }>
-  signInWithGoogle: () => Promise<{ error: Error | null }>
-  signInWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>
-  signUpWithEmail: (email: string, password: string) => Promise<{ error: Error | null }>
+  signInWithEmail: (email: string, password?: string) => Promise<{ error: Error | null }>
+  signUpWithEmail: (email: string, password?: string) => Promise<{ error: Error | null }>
   signInAsGuest: () => void
   signOut: () => Promise<void>
 }
@@ -18,139 +21,86 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
-  const [session, setSession] = useState<Session | null>(null)
+  const [user, setUser] = useState<MockUser | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [isDemoUser, setIsDemoUser] = useState<boolean>(false)
 
   useEffect(() => {
-    // Check demo user in localStorage
-    const savedDemoUser = localStorage.getItem('cortez_demo_user')
-    if (savedDemoUser) {
-      setIsDemoUser(true)
-      setUser({
-        id: 'demo-user-123',
-        email: 'demo@cortez.app',
-        app_metadata: {},
-        user_metadata: { full_name: 'Demo User' },
-        aud: 'authenticated',
-        created_at: new Date().toISOString()
-      } as User)
-      setLoading(false)
-      return
+    // Check local storage for persistent session
+    const savedUserStr = localStorage.getItem('lifeos_user_session')
+    if (savedUserStr) {
+      try {
+        const savedUser = JSON.parse(savedUserStr) as MockUser
+        setUser(savedUser)
+        if (savedUser.id === 'guest-user-123') {
+          setIsDemoUser(true)
+        }
+      } catch (err) {
+        console.error('Failed to parse user session', err)
+      }
     }
-
-    // Get initial Supabase session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    }).catch(() => {
-      setLoading(false)
-    })
-
-    // Listen for auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-      setUser(session?.user ?? null)
-      setLoading(false)
-    })
-
-    return () => {
-      subscription.unsubscribe()
-    }
+    setLoading(false)
   }, [])
 
-  const signInWithMagicLink = async (email: string) => {
-    try {
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`
-        }
-      })
-      return { error }
-    } catch (err) {
-      return { error: err as Error }
-    }
+  const persistUser = (newUser: MockUser, isGuest = false) => {
+    localStorage.setItem('lifeos_user_session', JSON.stringify(newUser))
+    setUser(newUser)
+    setIsDemoUser(isGuest)
   }
 
-  const signInWithGoogle = async () => {
-    try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/dashboard`
-        }
-      })
-      return { error }
-    } catch (err) {
-      return { error: err as Error }
+  const signInWithEmail = async (email: string, _password?: string) => {
+    setLoading(true)
+    // Simulate network delay for premium feel
+    await new Promise((resolve) => setTimeout(resolve, 800))
+    
+    // Accept any login for MVP local auth
+    const mockUser: MockUser = {
+      id: `user-${Date.now()}`,
+      email,
+      user_metadata: { full_name: email.split('@')[0] }
     }
+    
+    persistUser(mockUser)
+    setLoading(false)
+    return { error: null }
   }
 
-  const signInWithEmail = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      })
-      return { error }
-    } catch (err) {
-      return { error: err as Error }
+  const signUpWithEmail = async (email: string, _password?: string) => {
+    setLoading(true)
+    await new Promise((resolve) => setTimeout(resolve, 800))
+    
+    const mockUser: MockUser = {
+      id: `user-${Date.now()}`,
+      email,
+      user_metadata: { full_name: email.split('@')[0] }
     }
-  }
-
-  const signUpWithEmail = async (email: string, password: string) => {
-    try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/dashboard`
-        }
-      })
-      return { error }
-    } catch (err) {
-      return { error: err as Error }
-    }
+    
+    persistUser(mockUser)
+    setLoading(false)
+    return { error: null }
   }
 
   const signInAsGuest = () => {
-    localStorage.setItem('cortez_demo_user', 'true')
-    setIsDemoUser(true)
-    setUser({
-      id: 'demo-user-123',
-      email: 'demo@cortez.app',
-      app_metadata: {},
-      user_metadata: { full_name: 'Demo User' },
-      aud: 'authenticated',
-      created_at: new Date().toISOString()
-    } as User)
+    const guestUser: MockUser = {
+      id: 'guest-user-123',
+      email: 'guest@lifeos.app',
+      user_metadata: { full_name: 'Guest User' }
+    }
+    persistUser(guestUser, true)
   }
 
   const signOut = async () => {
-    if (isDemoUser) {
-      localStorage.removeItem('cortez_demo_user')
-      setIsDemoUser(false)
-      setUser(null)
-      setSession(null)
-      return
-    }
-    await supabase.auth.signOut()
+    localStorage.removeItem('lifeos_user_session')
     setUser(null)
-    setSession(null)
+    setIsDemoUser(false)
   }
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        session,
         loading,
         isDemoUser,
-        signInWithMagicLink,
-        signInWithGoogle,
         signInWithEmail,
         signUpWithEmail,
         signInAsGuest,

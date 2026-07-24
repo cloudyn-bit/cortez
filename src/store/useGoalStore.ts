@@ -25,46 +25,10 @@ function calculateGoalProgress(milestones: Milestone[]): number {
   return Math.round((completedCount / milestones.length) * 100)
 }
 
-const defaultSeedGoals: Goal[] = [
-  {
-    id: 'goal-1',
-    title: 'Master Organic Chemistry Mechanisms',
-    description: 'Understand SN1, SN2, E1, E2 reactions and synthesis pathways.',
-    category: 'academic',
-    targetDate: new Date(Date.now() + 86400000 * 14).toISOString().split('T')[0],
-    progress: 75,
-    createdAt: new Date().toISOString(),
-    completedAt: null,
-    celebrateTriggered: false,
-    milestones: [
-      { id: 'm-1', title: 'Review nucleophile vs electrophile rules', completed: true },
-      { id: 'm-2', title: 'Complete 20 SN1 & SN2 practice problems', completed: true },
-      { id: 'm-3', title: 'Summarize elimination reaction pathways', completed: true },
-      { id: 'm-4', title: 'Score 90%+ on chapter 4 self-quiz', completed: false },
-    ],
-  },
-  {
-    id: 'goal-2',
-    title: 'Ace Quantum Physics Semester Exam',
-    description: 'Score top tier on Schrödinger equation and wave-particle duality.',
-    category: 'academic',
-    targetDate: new Date(Date.now() + 86400000 * 30).toISOString().split('T')[0],
-    progress: 33,
-    createdAt: new Date().toISOString(),
-    completedAt: null,
-    celebrateTriggered: false,
-    milestones: [
-      { id: 'm-201', title: 'Review 16 active recall flashcards', completed: true },
-      { id: 'm-202', title: 'Derive 1D infinite square well equation', completed: false },
-      { id: 'm-203', title: 'Complete mock practice exam', completed: false },
-    ],
-  },
-]
-
 export const useGoalStore = create<GoalState>()(
   persist(
     (set) => ({
-      goals: defaultSeedGoals,
+      goals: [],
 
       addGoal: (goalData, milestoneTitles = []) => {
         const milestones: Milestone[] = milestoneTitles

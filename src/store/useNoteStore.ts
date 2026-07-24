@@ -11,72 +11,10 @@ interface NoteState {
   togglePin: (id: string) => void
 }
 
-const defaultSeedNotes: Note[] = [
-  {
-    id: 'note-1',
-    title: 'Roman Republic Law & Senate Structure',
-    content: `# Roman Republic Governance
-
-The Roman Republic operated on a complex system of checks and balances between magistrate assemblies, the Senate, and tribunes.
-
-## Key Executive Roles:
-- **Consuls**: Two elected chief executives holding civil and military imperium.
-- **Praetors**: Judicial commanders presiding over courts.
-- **Tribunes**: Plebeian champions holding sacred veto power (*intercessio*).
-
-> "The Senate proposed, the assemblies enacted, the magistrates executed."`,
-    tags: ['History', 'Roman Empire', 'Law'],
-    pinned: true,
-    createdAt: new Date(Date.now() - 86400000 * 2).toISOString(),
-    updatedAt: new Date(Date.now() - 3600000 * 2).toISOString(),
-  },
-  {
-    id: 'note-2',
-    title: 'Quantum Wave Mechanics & Schrödinger Equation',
-    content: `# Quantum Wave Mechanics
-
-The time-dependent Schrödinger equation governs how physical wavefunctions evolve over time:
-
-\`\`\`physics
-iħ (∂Ψ/∂t) = ĤΨ
-\`\`\`
-
-### Fundamental Postulates:
-1. **Wavefunction**: State of a particle represented by complex value \`Ψ(x,t)\`.
-2. **Probability Density**: Probability of finding particle is \`|Ψ(x,t)|²\`.
-3. **Superposition**: Linear combination of eigen-states.`,
-    tags: ['Physics', 'Quantum'],
-    pinned: false,
-    createdAt: new Date(Date.now() - 86400000 * 4).toISOString(),
-    updatedAt: new Date(Date.now() - 3600000 * 5).toISOString(),
-  },
-  {
-    id: 'note-3',
-    title: 'Organic Chemistry SN1 vs SN2 Reactions',
-    content: `# Nucleophilic Substitutions
-
-Comparing Bimolecular (SN2) and Unimolecular (SN1) reaction mechanisms.
-
-## SN2 Mechanism:
-- Concerted one-step reaction
-- Inversion of stereochemistry (Walden inversion)
-- Favored by strong nucleophiles and polar aprotic solvents
-
-## SN1 Mechanism:
-- Two-step mechanism via carbocation intermediate
-- Racemization of stereocenter
-- Favored by tertiary substrates and polar protic solvents`,
-    tags: ['Chemistry', 'SN1/SN2'],
-    pinned: false,
-    createdAt: new Date(Date.now() - 86400000 * 5).toISOString(),
-    updatedAt: new Date(Date.now() - 3600000 * 12).toISOString(),
-  },
-]
-
 export const useNoteStore = create<NoteState>()(
   persist(
     (set, get) => ({
-      notes: defaultSeedNotes,
+      notes: [],
 
       addNote: (noteData) => {
         const now = new Date().toISOString()

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
 import { CommandPalette } from '@/components/assistant/CommandPalette'
@@ -10,6 +11,7 @@ import { GoalModal } from '@/components/goals/GoalModal'
 import { NoteEditorModal } from '@/components/notes/NoteEditorModal'
 
 export function DashboardLayout() {
+  const location = useLocation()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isPaletteOpen, setIsPaletteOpen] = useState(false)
 
@@ -48,8 +50,10 @@ export function DashboardLayout() {
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
         />
-        <main className="flex-1 overflow-y-auto bg-background/50">
-          <Outlet />
+        <main className="flex-1 overflow-y-auto bg-background/50 relative">
+          <AnimatePresence mode="wait">
+            <Outlet key={location.pathname} />
+          </AnimatePresence>
         </main>
       </div>
 
