@@ -9,16 +9,14 @@ import {
   LayoutDashboard,
   Settings,
   PlusCircle,
-  Clock,
   Home,
-  BookOpenCheck,
-  ChevronRight,
   CheckSquare,
   Flame,
   Target,
   FileText,
   Timer,
-  BarChart3
+  BarChart3,
+  Zap
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -52,21 +50,21 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { label: 'Settings', path: '/settings', icon: Settings },
   ]
 
-  const recentSessions = [
-    { id: 'roman-history', title: 'Roman Empire History', date: 'Just now' },
-    { id: 'quantum-physics', title: 'Quantum Physics Basics', date: 'Yesterday' },
-    { id: 'organic-chemistry', title: 'Organic Chemistry Reactions', date: '3 days ago' },
+  const quickShortcuts = [
+    { label: 'Start Focus Timer', path: '/pomodoro', icon: Timer },
+    { label: 'Notes Workspace', path: '/notes', icon: FileText },
+    { label: 'View Analytics', path: '/analytics', icon: BarChart3 },
   ]
 
   const content = (
     <div className="flex h-full flex-col justify-between p-4">
       <div className="space-y-6">
-        {/* New Session CTA */}
+        {/* Quick Task CTA */}
         <div>
-          <Link to="/dashboard" onClick={onClose}>
+          <Link to="/tasks" onClick={onClose}>
             <Button variant="glow" className="w-full justify-start gap-2 text-sm font-semibold shadow-md">
               <PlusCircle className="h-4 w-4" />
-              <span>New Session</span>
+              <span>Create Task</span>
             </Button>
           </Link>
         </div>
@@ -107,30 +105,32 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           </nav>
         </div>
 
-        {/* Recent Sessions */}
+        {/* Productivity Shortcuts */}
         <div className="space-y-2">
           <div className="flex items-center justify-between px-3">
             <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <Clock className="h-3 w-3" />
-              Recent Sessions
+              <Zap className="h-3 w-3 text-indigo-400" />
+              Productivity Shortcuts
             </p>
           </div>
 
           <div className="space-y-1 pt-1">
-            {recentSessions.map((session) => (
-              <Link
-                key={session.id}
-                to={`/session/${session.id}`}
-                onClick={onClose}
-                className="group flex items-center justify-between rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
-              >
-                <div className="flex items-center space-x-2.5 truncate">
-                  <BookOpenCheck className="h-3.5 w-3.5 shrink-0 text-indigo-400/70 group-hover:text-indigo-400" />
-                  <span className="truncate">{session.title}</span>
-                </div>
-                <ChevronRight className="h-3 w-3 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground" />
-              </Link>
-            ))}
+            {quickShortcuts.map((shortcut, idx) => {
+              const Icon = shortcut.icon
+              return (
+                <Link
+                  key={idx}
+                  to={shortcut.path}
+                  onClick={onClose}
+                  className="group flex items-center justify-between rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+                >
+                  <div className="flex items-center space-x-2.5 truncate">
+                    <Icon className="h-3.5 w-3.5 shrink-0 text-indigo-400/70 group-hover:text-indigo-400" />
+                    <span className="truncate">{shortcut.label}</span>
+                  </div>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </div>
@@ -143,10 +143,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
             </span>
-            <span>Gemini 1.5 Engine</span>
+            <span>Cortez Companion</span>
           </div>
           <p className="text-[11px] text-muted-foreground mt-1">
-            Cortez active productivity engine
+            LifeOS active productivity engine
           </p>
         </div>
       </div>
