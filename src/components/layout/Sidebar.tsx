@@ -1,5 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
+import { useTaskStore } from '@/store/useTaskStore'
 import {
   LayoutDashboard,
   Settings,
@@ -7,7 +8,8 @@ import {
   Clock,
   Home,
   BookOpenCheck,
-  ChevronRight
+  ChevronRight,
+  CheckSquare
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -18,10 +20,14 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation()
+  const { tasks } = useTaskStore()
+
+  const pendingTaskCount = tasks.filter((t) => !t.completed).length
 
   const navItems = [
     { label: 'Home', path: '/', icon: Home },
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { label: 'Tasks', path: '/tasks', icon: CheckSquare, badge: pendingTaskCount > 0 ? pendingTaskCount : null },
     { label: 'Settings', path: '/settings', icon: Settings },
   ]
 
@@ -59,14 +65,21 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   to={item.path}
                   onClick={onClose}
                   className={cn(
-                    "flex items-center space-x-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                    "flex items-center justify-between rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     isActive
                       ? "bg-indigo-600/15 text-indigo-400 border border-indigo-500/30"
                       : "text-muted-foreground hover:bg-accent hover:text-foreground"
                   )}
                 >
-                  <Icon className={cn("h-4 w-4", isActive ? "text-indigo-400" : "text-muted-foreground")} />
-                  <span>{item.label}</span>
+                  <div className="flex items-center space-x-3">
+                    <Icon className={cn("h-4 w-4", isActive ? "text-indigo-400" : "text-muted-foreground")} />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge !== null && item.badge !== undefined && (
+                    <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-[10px] font-bold text-indigo-300">
+                      {item.badge}
+                    </span>
+                  )}
                 </Link>
               )
             })}

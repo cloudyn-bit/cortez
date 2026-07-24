@@ -4,6 +4,7 @@ import { PageContainer } from '@/components/layout/PageContainer'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { TodayTasksWidget } from '@/components/tasks/TodayTasksWidget'
 import {
   Sparkles,
   BookOpen,
@@ -54,7 +55,7 @@ export function DashboardPage() {
   return (
     <PageContainer
       title="Study Workspace"
-      description="Manage your study sessions, paste raw notes, and generate interactive learning materials."
+      description="Manage your study sessions, paste raw notes, and track your daily tasks."
       action={
         <Button
           variant="glow"
@@ -65,7 +66,7 @@ export function DashboardPage() {
           {activeTab === 'new' ? (
             <>
               <BookOpen className="h-4 w-4" />
-              <span>View Sessions</span>
+              <span>View Workspace</span>
             </>
           ) : (
             <>
@@ -76,6 +77,9 @@ export function DashboardPage() {
         </Button>
       }
     >
+      {/* Today's Tasks Widget Integration */}
+      <TodayTasksWidget />
+
       {activeTab === 'new' ? (
         <Card className="bg-card/70 border-border/80 shadow-xl max-w-3xl mx-auto">
           <CardHeader className="space-y-1">
@@ -96,7 +100,7 @@ export function DashboardPage() {
                 placeholder="e.g., Cellular Biology Chapter 4"
                 value={titleInput}
                 onChange={(e) => setTitleInput(e.target.value)}
-                className="w-full h-10 px-3 rounded-md border border-input bg-background/50 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                className="w-full h-10 px-3 rounded-md border border-input bg-background/50 text-sm focus:outline-none focus:ring-1 focus:ring-ring text-foreground"
               />
             </div>
 
@@ -107,7 +111,7 @@ export function DashboardPage() {
                 placeholder="Paste raw notes here... (e.g., Mitochondria are the powerhouse of the cell...)"
                 value={notesInput}
                 onChange={(e) => setNotesInput(e.target.value)}
-                className="w-full p-3 rounded-md border border-input bg-background/50 text-sm focus:outline-none focus:ring-1 focus:ring-ring resize-y font-sans"
+                className="w-full p-3 rounded-md border border-input bg-background/50 text-sm focus:outline-none focus:ring-1 focus:ring-ring resize-y font-sans text-foreground"
               />
             </div>
 
@@ -124,6 +128,7 @@ export function DashboardPage() {
         </Card>
       ) : (
         <div className="space-y-6">
+          <h3 className="text-lg font-bold text-foreground">Recent Study Sessions</h3>
           {/* Recent Sessions Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {mockSessions.map((session) => (
