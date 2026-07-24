@@ -87,8 +87,17 @@ export function PersonalizationProvider({ children }: { children: React.ReactNod
         root.style.setProperty('--card-base', '0 0% 8%')
         break
       case 'Glass':
+        root.style.setProperty('--background', '280 20% 5%') // Deep Purple Glass
+        root.style.setProperty('--card-base', '280 20% 8%')
+        break
       case 'Nebula':
+        root.style.setProperty('--background', '260 40% 4%') // Deep Magenta/Indigo
+        root.style.setProperty('--card-base', '260 40% 6%')
+        break
       case 'Minimal':
+        root.style.setProperty('--background', '0 0% 2%') // Almost Black
+        root.style.setProperty('--card-base', '0 0% 4%')
+        break
       default:
         root.style.setProperty('--background', '240 6% 2.5%')
         root.style.setProperty('--card-base', '240 6% 4.5%')

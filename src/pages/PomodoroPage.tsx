@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { usePomodoroStore } from '@/store/usePomodoroStore'
 import { CircularTimer } from '@/components/pomodoro/CircularTimer'
@@ -12,9 +12,10 @@ import {
   Flame,
   CheckCircle2,
   Clock,
-  Settings2,
-  Bell
+  Bell,
+  Settings2
 } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export function PomodoroPage() {
   const {
@@ -22,9 +23,22 @@ export function PomodoroPage() {
     stats,
     settings,
     switchMode,
-    updateSettings,
-    requestNotificationPermission
+    updateSettings
   } = usePomodoroStore()
+
+  const [notificationStatus, setNotificationStatus] = useState<NotificationPermission>('default')
+
+  useEffect(() => {
+    if ('Notification' in window) {
+      setNotificationStatus(Notification.permission)
+    }
+  }, [])
+
+  const handleRequestNotifications = async () => {
+    if (!('Notification' in window)) return
+    const permission = await Notification.requestPermission()
+    setNotificationStatus(permission)
+  }
 
   const [showSettings, setShowSettings] = useState(false)
   const [focusDur, setFocusDur] = useState(settings.focusDuration)
@@ -49,13 +63,23 @@ export function PomodoroPage() {
       action={
         <div className="flex items-center space-x-2">
           <Button
-            variant="outline"
+            variant={notificationStatus === 'granted' ? 'outline' : notificationStatus === 'denied' ? 'outline' : 'ghost'}
             size="sm"
-            onClick={requestNotificationPermission}
-            className="gap-1.5 text-xs"
+            onClick={handleRequestNotifications}
+            disabled={notificationStatus !== 'default'}
+            className={cn(
+              "text-xs gap-1.5 font-medium border-border/50",
+              notificationStatus === 'granted' ? "text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/10 border-emerald-500/20 opacity-100" :
+              notificationStatus === 'denied' ? "text-rose-400 bg-rose-500/10 hover:bg-rose-500/10 border-rose-500/20 opacity-100" :
+              "text-indigo-400 hover:text-indigo-300"
+            )}
           >
-            <Bell className="h-4 w-4 text-indigo-400" />
-            <span>Enable Push Notifications</span>
+            <Bell className="h-4 w-4" />
+            <span>
+              {notificationStatus === 'granted' ? 'Notifications Enabled ✓' :
+               notificationStatus === 'denied' ? 'Notifications Blocked' :
+               'Enable Push Notifications'}
+            </span>
           </Button>
 
           <Button

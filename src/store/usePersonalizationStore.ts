@@ -43,7 +43,56 @@ export const usePersonalizationStore = create<PersonalizationState>()(
   persist(
     (set) => ({
       ...defaultState,
-      setThemePreset: (preset) => set({ themePreset: preset }),
+      setThemePreset: (preset) => {
+        set(() => {
+          const updates: Partial<PersonalizationState> = { themePreset: preset }
+          switch (preset) {
+            case 'Aurora':
+              updates.accentColor = '#06b6d4'
+              updates.glassIntensity = 'medium'
+              updates.backgroundIntensity = 'medium'
+              updates.density = 'comfort'
+              break
+            case 'Midnight':
+              updates.accentColor = '#818cf8'
+              updates.glassIntensity = 'low'
+              updates.backgroundIntensity = 'low'
+              updates.density = 'comfort'
+              break
+            case 'Ocean':
+              updates.accentColor = '#0ea5e9'
+              updates.glassIntensity = 'medium'
+              updates.backgroundIntensity = 'high'
+              updates.density = 'spacious'
+              break
+            case 'Carbon':
+              updates.accentColor = '#a1a1aa'
+              updates.glassIntensity = 'low'
+              updates.backgroundIntensity = 'low'
+              updates.density = 'compact'
+              break
+            case 'Glass':
+              updates.accentColor = '#e879f9'
+              updates.glassIntensity = 'high'
+              updates.backgroundIntensity = 'high'
+              updates.density = 'spacious'
+              break
+            case 'Nebula':
+              updates.accentColor = '#c084fc'
+              updates.glassIntensity = 'high'
+              updates.backgroundIntensity = 'medium'
+              updates.density = 'comfort'
+              break
+            case 'Minimal':
+              updates.accentColor = '#71717a'
+              updates.glassIntensity = 'low'
+              updates.backgroundIntensity = 'low'
+              updates.density = 'compact'
+              break
+          }
+          return updates
+        })
+      },
       setAccentColor: (color) => set({ accentColor: color }),
       setGlassIntensity: (intensity) => set({ glassIntensity: intensity }),
       setBackgroundIntensity: (intensity) => set({ backgroundIntensity: intensity }),

@@ -9,7 +9,7 @@ export function LandingPage() {
   const navigate = useNavigate()
   const containerRef = useRef<HTMLDivElement>(null)
 
-  // Track scroll progress over a 500vh container
+  // Track scroll progress over a 700vh container for slower pacing
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end end"]
@@ -45,7 +45,7 @@ export function LandingPage() {
   const finalLogoScale = useTransform(scrollYProgress, [0.75, 0.85], [1.5, 1])
 
   return (
-    <div ref={containerRef} className="relative h-[500vh] bg-[#050506]">
+    <div ref={containerRef} className="relative h-[700vh] bg-[#050506]">
       {/* Fixed viewport container */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
         
@@ -62,10 +62,9 @@ export function LandingPage() {
           <motion.div 
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 2, ease: "easeOut" }}
-            className="w-1 h-1 rounded-full bg-primary shadow-[0_0_50px_20px_hsl(var(--primary))]"
+            transition={{ duration: 3, ease: "easeOut" }}
+            className="w-1 h-1 rounded-full bg-primary shadow-[0_0_80px_30px_hsl(var(--primary))]"
           />
-          <p className="mt-8 text-sm font-medium tracking-[0.3em] text-primary/70 uppercase">Energy Gathers</p>
         </motion.div>
 
         {/* --- SCENE 2: Glass Layers Separate --- */}
@@ -82,9 +81,6 @@ export function LandingPage() {
               className="absolute inset-0 glass-panel border-l-0 rounded-l-none"
               style={{ x: glassRightX, opacity: glassLayerOpacity }}
             />
-            <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-sm font-medium tracking-[0.3em] text-white/70 uppercase whitespace-nowrap">
-              Systems Online
-            </p>
           </div>
         </motion.div>
 

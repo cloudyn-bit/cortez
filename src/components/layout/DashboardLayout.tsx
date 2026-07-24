@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { useOutlet, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
@@ -13,6 +13,7 @@ import { NoteEditorModal } from '@/components/notes/NoteEditorModal'
 
 export function DashboardLayout() {
   const location = useLocation()
+  const outlet = useOutlet()
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isPaletteOpen, setIsPaletteOpen] = useState(false)
 
@@ -54,9 +55,9 @@ export function DashboardLayout() {
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
         />
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto relative">
           <AnimatePresence mode="popLayout">
-            <Outlet key={location.pathname} />
+            {outlet && React.cloneElement(outlet, { key: location.pathname })}
           </AnimatePresence>
         </main>
       </div>
