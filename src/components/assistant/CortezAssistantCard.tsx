@@ -93,12 +93,12 @@ export function CortezAssistantCard({
           
           <div>
             <div className="flex items-center space-x-2">
-              <h3 className="text-sm font-bold text-white tracking-tight">Cortez OS</h3>
+              <h3 className="text-sm font-bold text-white tracking-tight">Cortez</h3>
               <Badge variant="outline" className="text-[9px] bg-primary/10 text-primary border-primary/20 gap-1 font-semibold px-1.5 shadow-[0_0_8px_hsl(var(--primary)/0.2)]">
                 Active
               </Badge>
             </div>
-            <p className="text-[11px] text-zinc-500 font-medium">Intelligent Core</p>
+            <p className="text-[11px] text-zinc-500 font-medium">Your productivity companion.</p>
           </div>
         </div>
 

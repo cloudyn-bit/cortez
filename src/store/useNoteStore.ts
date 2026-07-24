@@ -77,7 +77,7 @@ export const useNoteStore = create<NoteState>()(
       },
     }),
     {
-      name: 'cortez-notes-storage',
+      name: 'lifeos-notes-storage',
     }
   )
 )

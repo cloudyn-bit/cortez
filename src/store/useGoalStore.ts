@@ -169,7 +169,7 @@ export const useGoalStore = create<GoalState>()(
       },
     }),
     {
-      name: 'cortez-goals-storage',
+      name: 'lifeos-goals-storage',
     }
   )
 )

@@ -63,7 +63,7 @@ export const useHabitStore = create<HabitState>()(
       },
     }),
     {
-      name: 'cortez-habits-storage',
+      name: 'lifeos-habits-storage',
     }
   )
 )

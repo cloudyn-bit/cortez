@@ -81,7 +81,7 @@ export const useTaskStore = create<TaskState>()(
       },
     }),
     {
-      name: 'cortez-tasks-storage',
+      name: 'lifeos-tasks-storage',
     }
   )
 )

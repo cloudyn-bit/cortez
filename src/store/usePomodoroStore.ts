@@ -202,7 +202,7 @@ export const usePomodoroStore = create<PomodoroState>()(
       },
     }),
     {
-      name: 'cortez-pomodoro-storage',
+      name: 'lifeos-pomodoro-storage',
       // Exclude running timer tick state from persistence so reloads don't leave zombie active timers
       partialize: (state) => ({
         settings: state.settings,
