@@ -55,7 +55,7 @@ export function DashboardLayout() {
           onClose={() => setSidebarOpen(false)}
         />
         <main className="flex-1 overflow-y-auto">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="popLayout">
             <Outlet key={location.pathname} />
           </AnimatePresence>
         </main>

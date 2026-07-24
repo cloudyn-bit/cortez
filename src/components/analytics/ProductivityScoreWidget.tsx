@@ -14,8 +14,9 @@ import {
   CheckSquare,
   Flame,
   Target,
-  Timer
+  Timer,
 } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export function ProductivityScoreWidget() {
   const { tasks } = useTaskStore()
@@ -34,7 +35,9 @@ export function ProductivityScoreWidget() {
   }
 
   return (
-    <Card className="bg-card/40 border-border/80 shadow-md hover:border-indigo-500/30 transition-all col-span-1 md:col-span-2">
+    <motion.div layoutId="layout-analytics" transition={{ type: "spring", stiffness: 300, damping: 30 }} className="h-full">
+    <Card className="bg-card/40 border-border/80 shadow-md hover:border-indigo-500/30 transition-all h-full relative overflow-hidden">
+      {/* Background decoration */}
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="space-y-1">
           <CardTitle className="text-base font-bold flex items-center gap-2 text-foreground">
@@ -107,5 +110,6 @@ export function ProductivityScoreWidget() {
         </div>
       </CardContent>
     </Card>
+    </motion.div>
   )
 }

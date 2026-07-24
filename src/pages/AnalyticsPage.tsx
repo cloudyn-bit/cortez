@@ -41,7 +41,8 @@ export function AnalyticsPage() {
   return (
     <PageContainer
       title="Productivity Analytics"
-      description="Real-time performance metrics, trend visualizations, and automated rule-based productivity insights."
+      description="Track your progress, monitor completion rates, and visualize your daily workflow."
+      layoutId="layout-analytics"
     >
       {/* Productivity Score & Algorithm Breakdown Header Card */}
       <Card className="bg-card/70 border-indigo-500/40 p-6 shadow-xl backdrop-blur-xl space-y-4">

@@ -14,6 +14,7 @@ import {
   Coffee,
   Sparkles
 } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export function DashboardPomodoroWidget() {
   const {
@@ -42,7 +43,8 @@ export function DashboardPomodoroWidget() {
   const Icon = modeIcons[mode]
 
   return (
-    <Card className="bg-card/40 border-border/80 shadow-md hover:border-indigo-500/30 transition-all">
+    <motion.div layoutId="layout-pomodoro" transition={{ type: "spring", stiffness: 300, damping: 30 }} className="h-full">
+    <Card className="bg-card/40 border-border/80 shadow-md hover:border-indigo-500/30 transition-all h-full">
       <CardHeader className="flex flex-row items-center justify-between pb-3">
         <div className="space-y-1">
           <CardTitle className="text-base font-bold flex items-center gap-2 text-foreground">
@@ -111,5 +113,6 @@ export function DashboardPomodoroWidget() {
         </div>
       </CardContent>
     </Card>
+    </motion.div>
   )
 }

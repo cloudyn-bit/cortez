@@ -46,7 +46,8 @@ export function NotesPage() {
   return (
     <PageContainer
       title="Notes Workspace"
-      description="Distraction-free Markdown note-taking with instant search, tagging, pinning, and autosave."
+      description="Capture ideas, summarize lectures, and build your knowledge base."
+      layoutId="layout-notes"
       action={
         <Button variant="glow" size="sm" onClick={handleCreateNote} className="gap-2 font-semibold shadow-md">
           <Plus className="h-4 w-4" />

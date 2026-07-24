@@ -45,6 +45,7 @@ export function TasksPage() {
     <PageContainer
       title="Task Manager"
       description="Organize your study goals, quiz prep, assignments, and revision schedules."
+      layoutId="layout-tasks"
       action={
         <Button variant="glow" size="sm" onClick={handleCreateTask} className="gap-2 font-semibold shadow-md">
           <Plus className="h-4 w-4" />

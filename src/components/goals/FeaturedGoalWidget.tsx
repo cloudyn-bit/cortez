@@ -12,6 +12,7 @@ import {
   Plus,
   Trophy
 } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { GoalModal } from './GoalModal'
 
 export function FeaturedGoalWidget() {
@@ -27,7 +28,8 @@ export function FeaturedGoalWidget() {
 
   return (
     <>
-      <Card className="bg-card/40 border-border/80 shadow-md hover:border-indigo-500/30 transition-all col-span-1 md:col-span-2">
+      <motion.div layoutId="layout-goals" transition={{ type: "spring", stiffness: 300, damping: 30 }} className="col-span-full">
+      <Card className="bg-card/40 border-border/80 shadow-md hover:border-indigo-500/30 transition-all overflow-hidden relative">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <div className="space-y-1">
             <CardTitle className="text-base font-bold flex items-center gap-2 text-foreground">
@@ -143,6 +145,7 @@ export function FeaturedGoalWidget() {
           )}
         </CardContent>
       </Card>
+      </motion.div>
 
       <GoalModal
         isOpen={isModalOpen}

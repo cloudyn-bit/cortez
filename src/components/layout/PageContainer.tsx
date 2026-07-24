@@ -8,6 +8,7 @@ interface PageContainerProps {
   description?: string
   action?: React.ReactNode
   className?: string
+  layoutId?: string
 }
 
 const containerVariants = {
@@ -46,10 +47,12 @@ export function PageContainer({
   title,
   description,
   action,
-  className
+  className,
+  layoutId
 }: PageContainerProps) {
   return (
     <motion.div
+      layoutId={layoutId}
       variants={containerVariants}
       initial="hidden"
       animate="visible"

@@ -62,7 +62,8 @@ export function HabitsPage() {
   return (
     <PageContainer
       title="Habit Tracker"
-      description="Build consistency, form strong study habits, and track your streaks."
+      description="Build consistent routines and maintain daily productivity streaks."
+      layoutId="layout-habits"
       action={
         <Button variant="glow" size="sm" onClick={handleCreateHabit} className="gap-2 font-semibold shadow-md">
           <Plus className="h-4 w-4" />

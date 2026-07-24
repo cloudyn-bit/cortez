@@ -11,6 +11,7 @@ import {
   ArrowRight,
   ListTodo
 } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { TaskModal } from './TaskModal'
 
 export function TodayTasksWidget() {
@@ -28,6 +29,7 @@ export function TodayTasksWidget() {
 
   return (
     <>
+      <motion.div layoutId="layout-tasks" transition={{ type: "spring", stiffness: 300, damping: 30 }}>
       <Card className="bg-card/40 border-border/80 shadow-md hover:border-indigo-500/30 transition-all">
         <CardHeader className="flex flex-row items-center justify-between pb-3">
           <div className="space-y-1">
@@ -120,6 +122,7 @@ export function TodayTasksWidget() {
           )}
         </CardContent>
       </Card>
+      </motion.div>
 
       <TaskModal
         isOpen={isModalOpen}

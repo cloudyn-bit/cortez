@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useTaskStore } from '@/store/useTaskStore'
 import { useHabitStore } from '@/store/useHabitStore'
@@ -61,25 +62,41 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               to={item.path}
               onClick={onClose}
               className={cn(
-                "flex items-center justify-between rounded-[var(--radius)] px-3 py-[calc(0.5rem*var(--density))] text-[13px] font-medium transition-all duration-[calc(200ms*var(--anim-speed))] group",
+                "relative flex items-center justify-between rounded-[var(--radius)] px-3 py-[calc(0.5rem*var(--density))] text-[13px] font-medium transition-colors duration-[calc(200ms*var(--anim-speed))] group",
                 isActive
-                  ? "bg-primary/10 text-primary shadow-inner shadow-primary/20"
+                  ? "text-primary"
                   : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
               )}
             >
-              <div className="flex items-center space-x-3">
+              {isActive && (
+                <motion.div
+                  layoutId="sidebar-active-bg"
+                  className="absolute inset-0 rounded-[var(--radius)] bg-primary/10 shadow-inner shadow-primary/20 pointer-events-none"
+                  initial={false}
+                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                />
+              )}
+              <div className="relative z-10 flex items-center space-x-3">
                 {/* Active indicator — subtle left glow */}
                 <div className="relative">
                   {isActive && (
-                    <div className="absolute -left-[18px] top-1/2 -translate-y-1/2 h-4 w-[3px] rounded-full bg-primary shadow-[0_0_10px_hsl(var(--primary)/0.6)]" />
+                    <motion.div 
+                      layoutId="sidebar-left-bar"
+                      className="absolute -left-[18px] top-1/2 -translate-y-1/2 h-4 w-[3px] rounded-full bg-primary shadow-[0_0_10px_hsl(var(--primary)/0.6)]" 
+                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                    />
                   )}
-                  <Icon className={cn("h-4 w-4 transition-colors duration-[calc(200ms*var(--anim-speed))]", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
+                  <motion.div animate={{ scale: isActive ? 1.1 : 1 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
+                    <Icon className={cn("h-4 w-4 transition-colors duration-[calc(200ms*var(--anim-speed))]", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
+                  </motion.div>
                 </div>
-                <span>{item.label}</span>
+                <motion.span animate={{ fontWeight: isActive ? 700 : 500 }}>
+                  {item.label}
+                </motion.span>
               </div>
               {item.badge !== null && item.badge !== undefined && (
                 <span className={cn(
-                  "rounded-full px-1.5 py-0.5 text-[10px] font-bold",
+                  "relative z-10 rounded-full px-1.5 py-0.5 text-[10px] font-bold",
                   item.badge === 'Live'
                     ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
                     : "bg-white/[0.04] text-zinc-500"

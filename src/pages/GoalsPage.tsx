@@ -59,7 +59,8 @@ export function GoalsPage() {
   return (
     <PageContainer
       title="Goal Management"
-      description="Set long-term study targets, track milestone checklists, and achieve your academic goals."
+      description="Set long-term objectives, break them into milestones, and track your overall progress."
+      layoutId="layout-goals"
       action={
         <Button variant="glow" size="sm" onClick={handleCreateGoal} className="gap-2 font-semibold shadow-md">
           <Plus className="h-4 w-4" />

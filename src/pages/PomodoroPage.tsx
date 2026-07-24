@@ -44,7 +44,8 @@ export function PomodoroPage() {
   return (
     <PageContainer
       title="Pomodoro Timer"
-      description="Stay focused, eliminate distraction, and maintain steady study momentum."
+      description="Stay focused with timed study sessions and breaks."
+      layoutId="layout-pomodoro"
       action={
         <div className="flex items-center space-x-2">
           <Button
