@@ -10,6 +10,37 @@ interface PageContainerProps {
   className?: string
 }
 
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.06,
+      delayChildren: 0.02,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -12,
+    filter: 'blur(4px)',
+    transition: { duration: 0.2 },
+  },
+}
+
+const childVariants = {
+  hidden: { opacity: 0, y: 16, filter: 'blur(4px)' },
+  visible: {
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: {
+      type: 'spring',
+      stiffness: 300,
+      damping: 30,
+    },
+  },
+}
+
 export function PageContainer({
   children,
   title,
@@ -19,30 +50,43 @@ export function PageContainer({
 }: PageContainerProps) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.25, ease: 'easeOut' }}
-      className={cn("w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6", className)}
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      className={cn("w-full max-w-7xl mx-auto p-4 sm:p-6 lg:p-8", className)}
     >
       {(title || description || action) && (
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-border/50">
-          <div className="space-y-1">
+        <motion.div
+          variants={childVariants}
+          className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 mb-6 border-b border-white/[0.04]"
+        >
+          <div className="space-y-1.5">
             {title && (
-              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-foreground bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent">
+              <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
                 {title}
               </h1>
             )}
             {description && (
-              <p className="text-sm text-muted-foreground max-w-2xl">
+              <p className="text-[13px] text-zinc-500 max-w-2xl leading-relaxed">
                 {description}
               </p>
             )}
           </div>
-          {action && <div className="flex items-center space-x-3">{action}</div>}
-        </div>
+          {action && <div className="flex items-center space-x-3 shrink-0">{action}</div>}
+        </motion.div>
       )}
-      {children}
+
+      <div className="space-y-6">
+        {React.Children.map(children, (child) => {
+          if (!React.isValidElement(child)) return child
+          return (
+            <motion.div variants={childVariants}>
+              {child}
+            </motion.div>
+          )
+        })}
+      </div>
     </motion.div>
   )
 }

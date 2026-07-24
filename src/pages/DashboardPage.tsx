@@ -12,10 +12,9 @@ import { TaskModal } from '@/components/tasks/TaskModal'
 import { HabitModal } from '@/components/habits/HabitModal'
 import { GoalModal } from '@/components/goals/GoalModal'
 import { NoteEditorModal } from '@/components/notes/NoteEditorModal'
-import { PlusCircle, Command } from 'lucide-react'
+import { PlusCircle } from 'lucide-react'
 
 export function DashboardPage() {
-  // Creation modals state for Cortez quick actions
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
   const [isHabitModalOpen, setIsHabitModalOpen] = useState(false)
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false)
@@ -23,21 +22,21 @@ export function DashboardPage() {
 
   return (
     <PageContainer
-      title="LifeOS Dashboard"
-      description="Your central productivity workspace powered by Cortez."
+      title="Dashboard"
+      description="Your productivity overview."
       action={
         <Button
           variant="glow"
           size="sm"
           onClick={() => setIsTaskModalOpen(true)}
-          className="gap-2 font-semibold shadow-md"
+          className="gap-2 font-semibold"
         >
           <PlusCircle className="h-4 w-4" />
           <span>New Task</span>
         </Button>
       }
     >
-      {/* Top Cortez Productivity Companion Card */}
+      {/* Cortez Companion Card — full width */}
       <CortezAssistantCard
         onOpenTaskModal={() => setIsTaskModalOpen(true)}
         onOpenHabitModal={() => setIsHabitModalOpen(true)}
@@ -45,33 +44,23 @@ export function DashboardPage() {
         onOpenNoteModal={() => setIsNoteModalOpen(true)}
       />
 
-      {/* Productivity Score Widget */}
-      <ProductivityScoreWidget />
+      {/* Productivity Score + Pomodoro — 2 column */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <ProductivityScoreWidget />
+        <DashboardPomodoroWidget />
+      </div>
 
-      {/* Pomodoro Timer Focus Widget */}
-      <DashboardPomodoroWidget />
-
-      {/* Featured Goal Focus Widget */}
+      {/* Featured Goal — full width */}
       <FeaturedGoalWidget />
 
-      {/* Today's Tasks & Habits Widgets Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      {/* Tasks + Habits — 2 column */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <TodayTasksWidget />
         <TodayHabitsWidget />
       </div>
 
-      {/* Recent Notes Widget */}
+      {/* Recent Notes — full width */}
       <RecentNotesWidget />
-
-      {/* Footer shortcut helper hint */}
-      <div className="rounded-xl border border-dashed border-border/70 p-4 text-center bg-card/20 text-xs text-muted-foreground flex flex-col sm:flex-row items-center justify-center gap-2">
-        <span className="flex items-center gap-1 font-semibold text-foreground">
-          <Command className="h-3.5 w-3.5 text-indigo-400" /> Pro Tip:
-        </span>
-        <span>
-          Press <kbd className="px-1.5 py-0.5 rounded bg-secondary font-mono text-[10px]">Cmd + K</kbd> or <kbd className="px-1.5 py-0.5 rounded bg-secondary font-mono text-[10px]">Ctrl + K</kbd> anytime to open the Cortez Command Palette.
-        </span>
-      </div>
 
       {/* Creation Modals */}
       <TaskModal isOpen={isTaskModalOpen} onClose={() => setIsTaskModalOpen(false)} />

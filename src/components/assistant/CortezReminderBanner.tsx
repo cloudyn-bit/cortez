@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTaskStore } from '@/store/useTaskStore'
 import { useHabitStore } from '@/store/useHabitStore'
 import { useGoalStore } from '@/store/useGoalStore'
-import { Bell, X, ArrowRight } from 'lucide-react'
+import { X, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 export function CortezReminderBanner() {
@@ -17,31 +17,28 @@ export function CortezReminderBanner() {
   useEffect(() => {
     const todayStr = new Date().toISOString().split('T')[0]
 
-    // 1. Check due tasks today
     const dueTasksToday = tasks.filter((t) => !t.completed && t.dueDate === todayStr)
     if (dueTasksToday.length > 0) {
       setReminder({
-        title: `Reminder: You have ${dueTasksToday.length} task${dueTasksToday.length > 1 ? 's' : ''} due today!`,
+        title: `${dueTasksToday.length} task${dueTasksToday.length > 1 ? 's' : ''} due today`,
         link: '/tasks',
       })
       return
     }
 
-    // 2. Check missed habits today
     const missedHabitsToday = habits.filter((h) => !h.history.includes(todayStr))
     if (missedHabitsToday.length > 0) {
       setReminder({
-        title: `Reminder: ${missedHabitsToday.length} habit${missedHabitsToday.length > 1 ? 's' : ''} remaining for today!`,
+        title: `${missedHabitsToday.length} habit${missedHabitsToday.length > 1 ? 's' : ''} remaining`,
         link: '/habits',
       })
       return
     }
 
-    // 3. Check goals near completion
     const closeGoals = goals.filter((g) => g.progress >= 75 && g.progress < 100)
     if (closeGoals.length > 0) {
       setReminder({
-        title: `Goal Target: "${closeGoals[0].title}" is ${closeGoals[0].progress}% complete!`,
+        title: `"${closeGoals[0].title}" is ${closeGoals[0].progress}% complete`,
         link: '/goals',
       })
       return
@@ -55,15 +52,15 @@ export function CortezReminderBanner() {
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: -4 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        className="bg-indigo-600/15 border-b border-indigo-500/30 px-4 py-2 text-xs text-indigo-200 flex items-center justify-between backdrop-blur-md"
+        exit={{ opacity: 0, y: -4 }}
+        className="bg-indigo-500/[0.06] border-b border-indigo-500/10 px-4 py-2 text-xs text-zinc-400 flex items-center justify-between"
       >
-        <div className="flex items-center space-x-2.5 truncate">
-          <Bell className="h-3.5 w-3.5 text-indigo-400 shrink-0 animate-bounce" />
+        <div className="flex items-center space-x-3 truncate">
+          <div className="h-1 w-1 rounded-full bg-indigo-400 shrink-0" />
           <span className="font-medium truncate">{reminder.title}</span>
-          <Link to={reminder.link} className="underline font-bold hover:text-white flex items-center gap-0.5 shrink-0 ml-2">
+          <Link to={reminder.link} className="text-indigo-400 hover:text-indigo-300 flex items-center gap-0.5 shrink-0 font-semibold transition-colors">
             <span>View</span>
             <ArrowRight className="h-3 w-3" />
           </Link>
@@ -71,10 +68,10 @@ export function CortezReminderBanner() {
 
         <button
           onClick={() => setIsDismissed(true)}
-          className="text-indigo-300 hover:text-white p-0.5 rounded shrink-0"
-          aria-label="Dismiss Reminder"
+          className="text-zinc-600 hover:text-zinc-400 p-0.5 rounded shrink-0 transition-colors"
+          aria-label="Dismiss"
         >
-          <X className="h-3.5 w-3.5" />
+          <X className="h-3 w-3" />
         </button>
       </motion.div>
     </AnimatePresence>

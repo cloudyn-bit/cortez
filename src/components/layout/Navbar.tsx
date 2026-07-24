@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/context/AuthContext'
 import { useTheme } from '@/context/ThemeProvider'
 import { NavbarMiniTimer } from '@/components/pomodoro/NavbarMiniTimer'
+import { ArcReactorLogo } from '@/components/ui/ArcReactorLogo'
 import { Button } from '@/components/ui/button'
 import {
-  Sparkles,
   Sun,
   Moon,
   LogOut,
@@ -29,17 +30,15 @@ export function Navbar({ onToggleSidebar, isSidebarOpen, onOpenCommandPalette }:
   const location = useLocation()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
-  // Format breadcrumb path
   const getBreadcrumb = () => {
     const path = location.pathname
     if (path === '/dashboard') return 'Dashboard'
     if (path === '/analytics') return 'Analytics'
-    if (path === '/notes') return 'Notes Workspace'
-    if (path === '/goals') return 'Goal Management'
-    if (path === '/tasks') return 'Task Manager'
-    if (path === '/habits') return 'Habit Tracker'
-    if (path === '/pomodoro') return 'Pomodoro Timer'
-    if (path.startsWith('/session')) return 'Workspace Session'
+    if (path === '/notes') return 'Notes'
+    if (path === '/goals') return 'Goals'
+    if (path === '/tasks') return 'Tasks'
+    if (path === '/habits') return 'Habits'
+    if (path === '/pomodoro') return 'Focus'
     if (path === '/settings') return 'Settings'
     return ''
   }
@@ -47,58 +46,53 @@ export function Navbar({ onToggleSidebar, isSidebarOpen, onOpenCommandPalette }:
   const breadcrumb = getBreadcrumb()
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-border/50 bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-white/[0.04] bg-[#050506]/80 backdrop-blur-xl">
       <div className="flex h-14 items-center justify-between px-4 sm:px-6">
-        {/* Left side: Hamburger button + Logo / Breadcrumbs */}
+        {/* Left: Logo + Breadcrumb */}
         <div className="flex items-center space-x-3">
           {onToggleSidebar && (
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden text-muted-foreground hover:text-foreground"
+              className="md:hidden text-zinc-500 hover:text-white"
               onClick={onToggleSidebar}
-              aria-label="Toggle Navigation Menu"
+              aria-label="Toggle Navigation"
             >
               {isSidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
             </Button>
           )}
 
-          <Link to="/" className="flex items-center space-x-2 font-bold text-foreground hover:opacity-90 transition-opacity">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-0.5 flex items-center justify-center shadow-md shadow-indigo-500/20">
-              <div className="h-full w-full bg-background rounded-[7px] flex items-center justify-center">
-                <Sparkles className="h-4 w-4 text-indigo-400" />
-              </div>
-            </div>
-            <span className="bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent font-extrabold tracking-tight">
-              Cortez
+          <Link to="/" className="flex items-center space-x-2.5 hover:opacity-80 transition-opacity">
+            <ArcReactorLogo size={28} animate={true} glowIntensity="low" />
+            <span className="text-sm font-extrabold text-white tracking-tight">
+              LifeOS
             </span>
           </Link>
 
           {breadcrumb && (
-            <div className="hidden sm:flex items-center text-xs text-muted-foreground space-x-1 pl-2 border-l border-border/60">
-              <ChevronRight className="h-3.5 w-3.5" />
-              <span className="font-medium text-foreground">{breadcrumb}</span>
+            <div className="hidden sm:flex items-center text-xs text-zinc-600 space-x-1.5 pl-3 border-l border-white/[0.06]">
+              <ChevronRight className="h-3 w-3" />
+              <span className="font-medium text-zinc-400">{breadcrumb}</span>
             </div>
           )}
         </div>
 
-        {/* Right side: Actions, Search Command Trigger, Navbar Mini Timer & User Dropdown */}
-        <div className="flex items-center space-x-3">
-          {/* Cmd + K Command Palette Trigger Button */}
+        {/* Right: Actions */}
+        <div className="flex items-center space-x-2">
+          {/* Command Palette Trigger */}
           {onOpenCommandPalette && (
             <button
               onClick={onOpenCommandPalette}
-              className="hidden sm:flex items-center space-x-2 rounded-lg border border-border/80 bg-secondary/40 px-2.5 py-1 text-xs text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+              className="hidden sm:flex items-center space-x-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-2.5 py-1.5 text-xs text-zinc-500 hover:bg-white/[0.04] hover:text-zinc-300 hover:border-white/[0.1] transition-all duration-200"
             >
-              <Search className="h-3.5 w-3.5 text-indigo-400" />
-              <span className="text-[11px] font-medium">Search...</span>
-              <kbd className="pointer-events-none rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 flex items-center gap-0.5">
+              <Search className="h-3.5 w-3.5" />
+              <span className="text-[11px] font-medium">Search</span>
+              <kbd className="pointer-events-none rounded border border-white/[0.06] bg-white/[0.02] px-1.5 font-mono text-[10px] text-zinc-600 flex items-center gap-0.5">
                 <Command className="h-2.5 w-2.5" /> K
               </kbd>
             </button>
           )}
 
-          {/* Navbar Mini Timer */}
           <NavbarMiniTimer />
 
           {/* Theme Toggle */}
@@ -106,66 +100,74 @@ export function Navbar({ onToggleSidebar, isSidebarOpen, onOpenCommandPalette }:
             variant="ghost"
             size="icon"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="text-muted-foreground hover:text-foreground"
-            aria-label="Toggle Dark/Light Mode"
+            className="text-zinc-500 hover:text-white h-8 w-8"
+            aria-label="Toggle Theme"
           >
-            {theme === 'dark' ? <Sun className="h-4 w-4 text-amber-300" /> : <Moon className="h-4 w-4 text-slate-700" />}
+            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
 
-          {/* User Profile / Auth State */}
+          {/* User Profile */}
           {user ? (
             <div className="relative">
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center space-x-2 rounded-full border border-border/80 bg-secondary/50 p-1 pl-2 pr-3 hover:bg-secondary transition-colors text-xs font-medium focus:outline-none focus:ring-2 focus:ring-ring"
+                className="flex items-center space-x-2 rounded-full border border-white/[0.06] bg-white/[0.02] p-1 pl-2 pr-3 hover:bg-white/[0.04] transition-all duration-200 text-xs font-medium focus:outline-none"
               >
-                <div className="h-6 w-6 rounded-full bg-indigo-600/30 text-indigo-400 flex items-center justify-center font-semibold text-xs border border-indigo-500/40">
+                <div className="h-6 w-6 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center font-semibold text-xs border border-indigo-500/20">
                   {user.email?.[0]?.toUpperCase() || 'U'}
                 </div>
-                <span className="max-w-[100px] truncate text-muted-foreground hidden sm:inline">
-                  {isDemoUser ? 'Demo User' : user.email?.split('@')[0]}
+                <span className="max-w-[80px] truncate text-zinc-500 hidden sm:inline">
+                  {isDemoUser ? 'Guest' : user.email?.split('@')[0]}
                 </span>
               </button>
 
-              {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-56 rounded-lg border border-border bg-card p-1 shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
-                  <div className="px-3 py-2 border-b border-border/50 text-xs">
-                    <p className="font-semibold text-foreground truncate">
-                      {user.user_metadata?.full_name || 'Cortez User'}
-                    </p>
-                    <p className="text-muted-foreground truncate">{user.email}</p>
-                    {isDemoUser && (
-                      <span className="mt-1 inline-block rounded bg-indigo-500/20 px-1.5 py-0.5 text-[10px] font-medium text-indigo-300">
-                        Demo Mode
-                      </span>
-                    )}
-                  </div>
-
-                  <Link
-                    to="/settings"
-                    onClick={() => setUserMenuOpen(false)}
-                    className="flex w-full items-center space-x-2 rounded-md px-3 py-2 text-xs text-muted-foreground hover:bg-accent hover:text-foreground transition-colors"
+              <AnimatePresence>
+                {userMenuOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -4, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: -4, scale: 0.95 }}
+                    transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute right-0 mt-2 w-52 rounded-xl border border-white/[0.06] bg-[#0a0a0c] p-1.5 shadow-2xl shadow-black/40 z-50"
                   >
-                    <UserIcon className="h-4 w-4" />
-                    <span>Settings</span>
-                  </Link>
+                    <div className="px-3 py-2.5 border-b border-white/[0.04] text-xs mb-1">
+                      <p className="font-semibold text-white truncate">
+                        {user.user_metadata?.full_name || 'LifeOS User'}
+                      </p>
+                      <p className="text-zinc-600 truncate text-[11px]">{user.email}</p>
+                      {isDemoUser && (
+                        <span className="mt-1.5 inline-block rounded-full bg-indigo-500/10 px-2 py-0.5 text-[10px] font-medium text-indigo-400 border border-indigo-500/15">
+                          Demo Mode
+                        </span>
+                      )}
+                    </div>
 
-                  <button
-                    onClick={() => {
-                      setUserMenuOpen(false)
-                      signOut()
-                    }}
-                    className="flex w-full items-center space-x-2 rounded-md px-3 py-2 text-xs text-destructive hover:bg-destructive/10 transition-colors"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span>Sign Out</span>
-                  </button>
-                </div>
-              )}
+                    <Link
+                      to="/settings"
+                      onClick={() => setUserMenuOpen(false)}
+                      className="flex w-full items-center space-x-2 rounded-lg px-3 py-2 text-xs text-zinc-400 hover:bg-white/[0.04] hover:text-white transition-colors"
+                    >
+                      <UserIcon className="h-3.5 w-3.5" />
+                      <span>Settings</span>
+                    </Link>
+
+                    <button
+                      onClick={() => {
+                        setUserMenuOpen(false)
+                        signOut()
+                      }}
+                      className="flex w-full items-center space-x-2 rounded-lg px-3 py-2 text-xs text-rose-400 hover:bg-rose-500/8 transition-colors"
+                    >
+                      <LogOut className="h-3.5 w-3.5" />
+                      <span>Sign Out</span>
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           ) : (
             <Link to="/login">
-              <Button size="sm" variant="default" className="text-xs">
+              <Button size="sm" variant="glow" className="text-xs">
                 Sign In
               </Button>
             </Link>

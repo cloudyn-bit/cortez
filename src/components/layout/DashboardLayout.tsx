@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
+import { AuroraBackground } from '@/components/ui/AuroraBackground'
 import { CommandPalette } from '@/components/assistant/CommandPalette'
 import { CortezReminderBanner } from '@/components/assistant/CortezReminderBanner'
 import { TaskModal } from '@/components/tasks/TaskModal'
@@ -35,8 +36,11 @@ export function DashboardLayout() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      {/* Non-intrusive Cortez Reminder Banner */}
+    <div className="min-h-screen bg-[#050506] flex flex-col relative">
+      {/* Ambient aurora background */}
+      <AuroraBackground />
+
+      {/* Non-intrusive reminder banner */}
       <CortezReminderBanner />
 
       <Navbar
@@ -45,12 +49,12 @@ export function DashboardLayout() {
         onOpenCommandPalette={() => setIsPaletteOpen(true)}
       />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden relative z-10">
         <Sidebar
           isOpen={sidebarOpen}
           onClose={() => setSidebarOpen(false)}
         />
-        <main className="flex-1 overflow-y-auto bg-background/50 relative">
+        <main className="flex-1 overflow-y-auto">
           <AnimatePresence mode="wait">
             <Outlet key={location.pathname} />
           </AnimatePresence>

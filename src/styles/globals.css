@@ -21,27 +21,27 @@
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
     --ring: 240 5.9% 10%;
-    --radius: 0.5rem;
+    --radius: 0.625rem;
   }
 
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 240 10% 5.5%;
-    --card-foreground: 0 0% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --background: 240 6% 2.5%;
+    --foreground: 0 0% 96%;
+    --card: 240 6% 4.5%;
+    --card-foreground: 0 0% 96%;
+    --primary: 234 89% 64%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 240 4% 10%;
+    --secondary-foreground: 0 0% 96%;
+    --muted: 240 4% 10%;
+    --muted-foreground: 240 5% 58%;
+    --accent: 240 4% 10%;
+    --accent-foreground: 0 0% 96%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 96%;
+    --border: 240 4% 12%;
+    --input: 240 4% 12%;
+    --ring: 234 89% 64%;
   }
 }
 
@@ -49,36 +49,132 @@
   * {
     @apply border-border;
   }
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
   body {
     @apply bg-background text-foreground font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
+    letter-spacing: -0.011em;
+  }
+  ::selection {
+    background: rgba(99, 102, 241, 0.25);
+    color: #c7d2fe;
   }
 }
 
-/* Custom scrollbars for high-end SaaS feel */
+/* ═══════════════════════════════════════
+   Premium Scrollbar
+   ═══════════════════════════════════════ */
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
-
 ::-webkit-scrollbar-track {
   background: transparent;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.08);
   border-radius: 9999px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.16);
 }
 
-/* Linear-style glow utilities */
+/* ═══════════════════════════════════════
+   Arc Reactor Logo Animations
+   ═══════════════════════════════════════ */
+
+@keyframes arc-rotate-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes arc-rotate-medium {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(-360deg); }
+}
+@keyframes arc-rotate-fast {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@keyframes arc-pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.08); }
+}
+@keyframes arc-core-pulse {
+  0%, 100% { opacity: 0.7; r: 3; }
+  50% { opacity: 1; r: 3.8; }
+}
+@keyframes arc-node-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+.arc-rotate-slow {
+  animation: arc-rotate-slow 60s linear infinite;
+}
+.arc-rotate-medium {
+  animation: arc-rotate-medium 40s linear infinite;
+}
+.arc-rotate-fast {
+  animation: arc-rotate-fast 25s linear infinite;
+}
+.arc-pulse {
+  animation: arc-pulse 4s ease-in-out infinite;
+}
+.arc-core-pulse {
+  animation: arc-core-pulse 3s ease-in-out infinite;
+}
+.arc-node-pulse {
+  animation: arc-node-pulse 2.5s ease-in-out infinite;
+}
+
+/* Hover acceleration */
+.group:hover .arc-rotate-slow {
+  animation-duration: 30s;
+}
+.group:hover .arc-rotate-medium {
+  animation-duration: 20s;
+}
+.group:hover .arc-rotate-fast {
+  animation-duration: 12s;
+}
+.group:hover .arc-core-pulse {
+  animation-duration: 1.5s;
+}
+
+/* ═══════════════════════════════════════
+   Aurora Background Animations
+   ═══════════════════════════════════════ */
+
+@keyframes aurora-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(80px, -40px) scale(1.1); }
+  50% { transform: translate(-40px, 60px) scale(0.95); }
+  75% { transform: translate(60px, 30px) scale(1.05); }
+}
+@keyframes aurora-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  25% { transform: translate(-60px, 50px) scale(1.08); }
+  50% { transform: translate(50px, -30px) scale(0.92); }
+  75% { transform: translate(-30px, -60px) scale(1.04); }
+}
+@keyframes aurora-drift-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(40px, 70px) scale(1.06); }
+  66% { transform: translate(-70px, -20px) scale(0.96); }
+}
+
+/* ═══════════════════════════════════════
+   Glow Utilities
+   ═══════════════════════════════════════ */
+
 .glow-effect {
   position: relative;
 }
-
 .glow-effect::before {
   content: '';
   position: absolute;
@@ -86,13 +182,12 @@
   left: -1px;
   right: -1px;
   bottom: -1px;
-  background: linear-gradient(45deg, rgba(99, 102, 241, 0.3), rgba(168, 85, 247, 0.3), rgba(236, 72, 153, 0.3));
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2), rgba(168, 85, 247, 0.15));
   border-radius: inherit;
   z-index: -1;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s ease;
 }
-
 .glow-effect:hover::before {
   opacity: 1;
 }
