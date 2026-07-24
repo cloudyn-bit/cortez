@@ -1,5 +1,6 @@
 import { useEffect, Suspense } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { AnimatePresence } from 'framer-motion'
 import { AuthProvider } from '@/context/AuthContext'
 import { PersonalizationProvider } from '@/context/PersonalizationProvider'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
@@ -49,41 +50,51 @@ function PageLoadingFallback() {
   )
 }
 
+function AnimatedRoutes() {
+  const location = useLocation()
+  
+  return (
+    <AnimatePresence mode="wait">
+      <Routes location={location} key={location.pathname}>
+        {/* Public routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+
+        {/* Protected dashboard routes */}
+        <Route
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/analytics" element={<AnalyticsPage />} />
+          <Route path="/pomodoro" element={<PomodoroPage />} />
+          <Route path="/notes" element={<NotesPage />} />
+          <Route path="/goals" element={<GoalsPage />} />
+          <Route path="/tasks" element={<TasksPage />} />
+          <Route path="/habits" element={<HabitsPage />} />
+          <Route path="/personalization" element={<PersonalizationPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Route>
+
+        {/* 404 Fallback */}
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </AnimatePresence>
+  )
+}
+
 export function App() {
   return (
     <BrowserRouter>
       <PersonalizationProvider>
         <AuthProvider>
           <GlobalTimerLoop />
-        <Suspense fallback={<PageLoadingFallback />}>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<LoginPage />} />
-
-            {/* Protected dashboard routes */}
-            <Route
-              element={
-                <ProtectedRoute>
-                  <DashboardLayout />
-                </ProtectedRoute>
-              }
-            >
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/analytics" element={<AnalyticsPage />} />
-              <Route path="/pomodoro" element={<PomodoroPage />} />
-              <Route path="/notes" element={<NotesPage />} />
-              <Route path="/goals" element={<GoalsPage />} />
-              <Route path="/tasks" element={<TasksPage />} />
-              <Route path="/habits" element={<HabitsPage />} />
-              <Route path="/personalization" element={<PersonalizationPage />} />
-              <Route path="/settings" element={<SettingsPage />} />
-            </Route>
-
-            {/* 404 Fallback */}
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Suspense>
+          <Suspense fallback={<PageLoadingFallback />}>
+            <AnimatedRoutes />
+          </Suspense>
         </AuthProvider>
       </PersonalizationProvider>
     </BrowserRouter>

@@ -1,148 +1,207 @@
-import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { useState, useEffect } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { ArcReactorLogo } from '@/components/ui/ArcReactorLogo'
 import { Button } from '@/components/ui/button'
-import { ShieldCheck, ArrowRight } from 'lucide-react'
+
+function ParticleSystem() {
+  // Static random values to prevent hydration errors, but we are client-side so it's fine.
+  // Using small array of particles
+  const particles = Array.from({ length: 40 }).map((_, i) => ({
+    id: i,
+    x: Math.random() * 100,
+    y: Math.random() * 100,
+    size: Math.random() * 2 + 1,
+    duration: Math.random() * 20 + 10,
+    delay: Math.random() * 5,
+  }))
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          className="absolute rounded-full bg-cyan-400/30"
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            width: p.size,
+            height: p.size,
+          }}
+          animate={{
+            y: ['0%', '-50%', '0%'],
+            x: ['0%', '20%', '0%'],
+            opacity: [0, 0.8, 0],
+          }}
+          transition={{
+            duration: p.duration,
+            repeat: Infinity,
+            delay: p.delay,
+            ease: "linear"
+          }}
+        />
+      ))}
+    </div>
+  )
+}
+
+function PrecisionCore() {
+  return (
+    <motion.div 
+      layoutId="auth-card" 
+      className="relative w-64 h-64 flex items-center justify-center rounded-[40px] bg-black/0"
+    >
+      {/* Central Glowing Point -> Core */}
+      <motion.div
+        className="absolute w-4 h-4 bg-cyan-300 rounded-full shadow-[0_0_40px_20px_rgba(34,211,238,0.5)]"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: [0, 1, 1.2, 1], opacity: 1 }}
+        transition={{ duration: 3, times: [0, 0.6, 0.8, 1], ease: "easeInOut" }}
+      />
+
+      {/* Ring 1 - Inner fast */}
+      <motion.div
+        className="absolute w-24 h-24 border border-cyan-500/40 rounded-full border-t-cyan-300 border-b-transparent"
+        initial={{ scale: 0, opacity: 0, rotate: 0 }}
+        animate={{ scale: 1, opacity: 1, rotate: 360 }}
+        transition={{ scale: { delay: 1, duration: 2 }, rotate: { duration: 4, repeat: Infinity, ease: "linear" } }}
+      />
+
+      {/* Ring 2 - Middle slow */}
+      <motion.div
+        className="absolute w-36 h-36 border border-zinc-700/50 rounded-full border-l-cyan-400/60 border-r-transparent"
+        initial={{ scale: 0, opacity: 0, rotate: 0 }}
+        animate={{ scale: 1, opacity: 1, rotate: -360 }}
+        transition={{ scale: { delay: 1.5, duration: 2 }, rotate: { duration: 8, repeat: Infinity, ease: "linear" } }}
+      />
+
+      {/* Ring 3 - Outer geometric */}
+      <motion.div
+        className="absolute w-48 h-48 border border-white/5 rounded-full flex items-center justify-center"
+        initial={{ scale: 0, opacity: 0, rotate: 0 }}
+        animate={{ scale: 1, opacity: 1, rotate: 180 }}
+        transition={{ scale: { delay: 2, duration: 2 }, rotate: { duration: 12, repeat: Infinity, ease: "linear" } }}
+      >
+        <div className="absolute w-full h-full border-[0.5px] border-cyan-900/40 rounded-full clip-path-polygon" />
+        {/* Nodes */}
+        <div className="absolute top-0 w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_10px_2px_rgba(34,211,238,0.8)]" />
+        <div className="absolute bottom-0 w-1 h-1 bg-cyan-400 rounded-full shadow-[0_0_10px_2px_rgba(34,211,238,0.8)]" />
+      </motion.div>
+    </motion.div>
+  )
+}
 
 export function LandingPage() {
   const navigate = useNavigate()
-  const containerRef = useRef<HTMLDivElement>(null)
+  const [stage, setStage] = useState(0)
 
-  // Track scroll progress over a 700vh container for slower pacing
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start start", "end end"]
-  })
+  // Orchestrate the timeline
+  useEffect(() => {
+    // Stage 0: Initial dark screen + glowing point starts (0s)
+    const t1 = setTimeout(() => setStage(1), 3500) // Logo mostly assembled, start text "LifeOS"
+    const t2 = setTimeout(() => setStage(2), 5000) // "One dashboard."
+    const t3 = setTimeout(() => setStage(3), 6500) // "Total control."
+    const t4 = setTimeout(() => setStage(4), 8000) // Show Enter button
 
-  // ---------------------------------------------------------------------------
-  // Scene 1: Energy Gathers & Light Moves (0% to 25%)
-  // ---------------------------------------------------------------------------
-  const scene1Opacity = useTransform(scrollYProgress, [0, 0.2, 0.25], [1, 1, 0])
-  const scene1Scale = useTransform(scrollYProgress, [0, 0.25], [1, 1.2])
-  const scene1Blur = useTransform(scrollYProgress, [0.15, 0.25], [0, 20])
-
-  // ---------------------------------------------------------------------------
-  // Scene 2: Glass Layers Separate (25% to 50%)
-  // ---------------------------------------------------------------------------
-  const scene2Opacity = useTransform(scrollYProgress, [0.2, 0.3, 0.45, 0.5], [0, 1, 1, 0])
-  const glassLeftX = useTransform(scrollYProgress, [0.25, 0.45], ["0%", "-50%"])
-  const glassRightX = useTransform(scrollYProgress, [0.25, 0.45], ["0%", "50%"])
-  const glassLayerOpacity = useTransform(scrollYProgress, [0.25, 0.35], [0, 1])
-
-  // ---------------------------------------------------------------------------
-  // Scene 3: The Core Assembles & Rings Rotate (45% to 75%)
-  // ---------------------------------------------------------------------------
-  const scene3Opacity = useTransform(scrollYProgress, [0.45, 0.55, 0.7, 0.75], [0, 1, 1, 0])
-  const logoScale = useTransform(scrollYProgress, [0.5, 0.7], [0.5, 1.5])
-  const logoRotate = useTransform(scrollYProgress, [0.5, 0.7], [-90, 0])
-
-  // ---------------------------------------------------------------------------
-  // Scene 4: Logo Locks & Final Reveal (75% to 100%)
-  // ---------------------------------------------------------------------------
-  const scene4Opacity = useTransform(scrollYProgress, [0.75, 0.85, 1], [0, 1, 1])
-  const scene4Y = useTransform(scrollYProgress, [0.75, 0.85], [50, 0])
-  const finalLogoScale = useTransform(scrollYProgress, [0.75, 0.85], [1.5, 1])
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+      clearTimeout(t3)
+      clearTimeout(t4)
+    }
+  }, [])
 
   return (
-    <div ref={containerRef} className="relative h-[700vh] bg-[#050506]">
-      {/* Fixed viewport container */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
-        
-        {/* Background ambient glow */}
-        <div className="absolute inset-0 pointer-events-none opacity-20">
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] rounded-full bg-primary mix-blend-screen filter blur-[120px]" />
+    <motion.div 
+      className="relative w-full h-screen bg-[#020203] overflow-hidden flex flex-col items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0, transition: { duration: 0.8, ease: "easeInOut" } }}
+    >
+      {/* Ambient Lighting */}
+      <div className="absolute inset-0 pointer-events-none">
+        <motion.div 
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[60vw] h-[60vw] rounded-full bg-cyan-900/10 blur-[120px]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 4 }}
+        />
+      </div>
+
+      <ParticleSystem />
+
+      {/* Parallax Container */}
+      <motion.div 
+        className="relative z-10 flex flex-col items-center justify-center"
+        initial={{ y: 20 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 6, ease: "easeOut" }}
+      >
+        <PrecisionCore />
+
+        {/* Text Sequence */}
+        <div className="mt-16 h-32 flex flex-col items-center justify-start text-center">
+          <AnimatePresence>
+            {stage >= 1 && (
+              <motion.h1 
+                className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-2"
+                initial={{ opacity: 0, y: 10, filter: 'blur(10px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                transition={{ duration: 1.5, ease: "easeOut" }}
+              >
+                LifeOS
+              </motion.h1>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {stage >= 2 && (
+              <motion.p 
+                className="text-lg md:text-xl text-zinc-400 font-medium"
+                initial={{ opacity: 0, y: 5, filter: 'blur(5px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                transition={{ duration: 1, ease: "easeOut" }}
+              >
+                One dashboard.
+              </motion.p>
+            )}
+          </AnimatePresence>
+          
+          <AnimatePresence>
+            {stage >= 3 && (
+              <motion.p 
+                className="text-lg md:text-xl text-zinc-400 font-medium"
+                initial={{ opacity: 0, y: 5, filter: 'blur(5px)' }}
+                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                transition={{ duration: 1, ease: "easeOut" }}
+              >
+                Total control.
+              </motion.p>
+            )}
+          </AnimatePresence>
         </div>
 
-        {/* --- SCENE 1: Energy Gathers --- */}
-        <motion.div 
-          className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
-          style={{ opacity: scene1Opacity, scale: scene1Scale, filter: `blur(${scene1Blur}px)` }}
-        >
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 3, ease: "easeOut" }}
-            className="w-1 h-1 rounded-full bg-primary shadow-[0_0_80px_30px_hsl(var(--primary))]"
-          />
-        </motion.div>
-
-        {/* --- SCENE 2: Glass Layers Separate --- */}
-        <motion.div 
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          style={{ opacity: scene2Opacity }}
-        >
-          <div className="relative w-[300px] h-[400px]">
-            <motion.div 
-              className="absolute inset-0 glass-panel border-r-0 rounded-r-none"
-              style={{ x: glassLeftX, opacity: glassLayerOpacity }}
-            />
-            <motion.div 
-              className="absolute inset-0 glass-panel border-l-0 rounded-l-none"
-              style={{ x: glassRightX, opacity: glassLayerOpacity }}
-            />
-          </div>
-        </motion.div>
-
-        {/* --- SCENE 3: Core Assembles --- */}
-        <motion.div 
-          className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
-          style={{ opacity: scene3Opacity }}
-        >
-          <motion.div style={{ scale: logoScale, rotate: logoRotate }}>
-            <ArcReactorLogo size={120} animate={true} glowIntensity="high" />
-          </motion.div>
-        </motion.div>
-
-        {/* --- SCENE 4: Logo Locks & Reveal --- */}
-        <motion.div 
-          className="absolute inset-0 flex flex-col items-center justify-center z-10"
-          style={{ opacity: scene4Opacity, y: scene4Y }}
-        >
-          <motion.div style={{ scale: finalLogoScale }} className="mb-8 pointer-events-none">
-            <ArcReactorLogo size={80} animate={true} glowIntensity="medium" />
-          </motion.div>
-
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6">
-            LifeOS
-          </h1>
-          <p className="text-lg md:text-xl text-zinc-400 max-w-lg text-center mb-10 leading-relaxed font-medium">
-            Your premium productivity companion. <br/> Focus. Track. Achieve.
-          </p>
-
-          <div className="flex flex-col sm:flex-row items-center gap-4 pointer-events-auto">
-            <Button
-              variant="glow"
-              size="lg"
-              onClick={() => navigate('/login')}
-              className="gap-2 font-bold px-8 h-12 rounded-full"
+        {/* Enter Button */}
+        <AnimatePresence>
+          {stage >= 4 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 1, type: "spring", stiffness: 100 }}
+              className="mt-8 z-20"
             >
-              <span>Initialize Workflow</span>
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-            
-            <Button
-              variant="ghost"
-              size="lg"
-              onClick={() => navigate('/login')}
-              className="gap-2 font-semibold text-zinc-400 hover:text-white px-6 h-12 rounded-full"
-            >
-              <ShieldCheck className="h-4 w-4" />
-              <span>Guest Access</span>
-            </Button>
-          </div>
-        </motion.div>
-
-        {/* Scroll Indicator */}
-        <motion.div 
-          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
-          style={{ opacity: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [1, 0, 0, 0]) }}
-        >
-          <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-500">Scroll to Ignite</span>
-          <div className="w-px h-8 bg-gradient-to-b from-primary/50 to-transparent" />
-        </motion.div>
-
-      </div>
-    </div>
+              <Button
+                variant="glow"
+                size="lg"
+                onClick={() => navigate('/login')}
+                className="relative overflow-hidden group bg-white/5 hover:bg-white/10 border border-white/10 text-white shadow-2xl backdrop-blur-md rounded-full px-8 h-12 transition-all duration-300 hover:shadow-[0_0_40px_-10px_rgba(34,211,238,0.5)] hover:-translate-y-1 active:scale-95"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-400/10 to-cyan-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <span className="font-semibold tracking-wide">Enter LifeOS</span>
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+    </motion.div>
   )
 }

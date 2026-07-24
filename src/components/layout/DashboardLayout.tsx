@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useOutlet, useLocation } from 'react-router-dom'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
 import { AuroraBackground } from '@/components/ui/AuroraBackground'
@@ -37,7 +37,11 @@ export function DashboardLayout() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-[#050506] flex flex-col relative">
+    <motion.div 
+      layoutId="auth-card"
+      transition={{ type: "spring", stiffness: 100, damping: 20, mass: 1 }}
+      className="min-h-screen bg-[#020203] flex flex-col relative"
+    >
       {/* Ambient aurora background */}
       <AuroraBackground />
 
@@ -77,6 +81,6 @@ export function DashboardLayout() {
       <HabitModal isOpen={isHabitModalOpen} onClose={() => setIsHabitModalOpen(false)} />
       <GoalModal isOpen={isGoalModalOpen} onClose={() => setIsGoalModalOpen(false)} />
       <NoteEditorModal isOpen={isNoteModalOpen} onClose={() => setIsNoteModalOpen(false)} />
-    </div>
+    </motion.div>
   )
 }
