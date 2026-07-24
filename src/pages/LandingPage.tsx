@@ -1,194 +1,152 @@
 import { useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { motion, useScroll, useTransform } from 'framer-motion'
+import { useNavigate } from 'react-router-dom'
 import { ArcReactorLogo } from '@/components/ui/ArcReactorLogo'
 import { Button } from '@/components/ui/button'
-import { ArrowRight, ShieldCheck } from 'lucide-react'
+import { ShieldCheck, ArrowRight } from 'lucide-react'
 
 export function LandingPage() {
   const navigate = useNavigate()
   const containerRef = useRef<HTMLDivElement>(null)
 
+  // Track scroll progress over a 500vh container
   const { scrollYProgress } = useScroll({
     target: containerRef,
-    offset: ['start start', 'end end'],
+    offset: ["start start", "end end"]
   })
 
-  // Scene 1: Title reveal (0–25%)
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.08, 0.22, 0.3], [0, 1, 1, 0])
-  const titleY = useTransform(scrollYProgress, [0, 0.08], [40, 0])
-  const titleScale = useTransform(scrollYProgress, [0.22, 0.3], [1, 0.95])
+  // ---------------------------------------------------------------------------
+  // Scene 1: Energy Gathers & Light Moves (0% to 25%)
+  // ---------------------------------------------------------------------------
+  const scene1Opacity = useTransform(scrollYProgress, [0, 0.2, 0.25], [1, 1, 0])
+  const scene1Scale = useTransform(scrollYProgress, [0, 0.25], [1, 1.2])
+  const scene1Blur = useTransform(scrollYProgress, [0.15, 0.25], [0, 20])
 
-  // Scene 2: Logo assembly (25–55%)
-  const logoOpacity = useTransform(scrollYProgress, [0.2, 0.3, 0.52, 0.6], [0, 1, 1, 0])
-  const logoScale = useTransform(scrollYProgress, [0.2, 0.35], [0.5, 1])
-  const logoRotate = useTransform(scrollYProgress, [0.2, 0.5], [90, 0])
+  // ---------------------------------------------------------------------------
+  // Scene 2: Glass Layers Separate (25% to 50%)
+  // ---------------------------------------------------------------------------
+  const scene2Opacity = useTransform(scrollYProgress, [0.2, 0.3, 0.45, 0.5], [0, 1, 1, 0])
+  const glassLeftX = useTransform(scrollYProgress, [0.25, 0.45], ["0%", "-50%"])
+  const glassRightX = useTransform(scrollYProgress, [0.25, 0.45], ["0%", "50%"])
+  const glassLayerOpacity = useTransform(scrollYProgress, [0.25, 0.35], [0, 1])
 
-  // Ring stagger reveals
-  const ring1Opacity = useTransform(scrollYProgress, [0.22, 0.3], [0, 1])
-  const ring2Opacity = useTransform(scrollYProgress, [0.26, 0.34], [0, 1])
-  const ring3Opacity = useTransform(scrollYProgress, [0.30, 0.38], [0, 1])
+  // ---------------------------------------------------------------------------
+  // Scene 3: The Core Assembles & Rings Rotate (45% to 75%)
+  // ---------------------------------------------------------------------------
+  const scene3Opacity = useTransform(scrollYProgress, [0.45, 0.55, 0.7, 0.75], [0, 1, 1, 0])
+  const logoScale = useTransform(scrollYProgress, [0.5, 0.7], [0.5, 1.5])
+  const logoRotate = useTransform(scrollYProgress, [0.5, 0.7], [-90, 0])
 
-  // Scene 3: Tagline (50–75%)
-  const taglineOpacity = useTransform(scrollYProgress, [0.48, 0.56, 0.72, 0.78], [0, 1, 1, 0])
-  const taglineY = useTransform(scrollYProgress, [0.48, 0.56], [30, 0])
-
-  // Scene 4: CTA / Login form (75–100%)
-  const ctaOpacity = useTransform(scrollYProgress, [0.72, 0.82], [0, 1])
-  const ctaY = useTransform(scrollYProgress, [0.72, 0.82], [40, 0])
-  const ctaLogoScale = useTransform(scrollYProgress, [0.72, 0.85], [1.2, 1])
+  // ---------------------------------------------------------------------------
+  // Scene 4: Logo Locks & Final Reveal (75% to 100%)
+  // ---------------------------------------------------------------------------
+  const scene4Opacity = useTransform(scrollYProgress, [0.75, 0.85, 1], [0, 1, 1])
+  const scene4Y = useTransform(scrollYProgress, [0.75, 0.85], [50, 0])
+  const finalLogoScale = useTransform(scrollYProgress, [0.75, 0.85], [1.5, 1])
 
   return (
-    <div
-      ref={containerRef}
-      className="relative bg-[#050506]"
-      style={{ height: '500vh' }}
-    >
-      {/* Ambient background */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <div
-          className="absolute w-[800px] h-[800px] rounded-full opacity-[0.05]"
-          style={{
-            background: 'radial-gradient(circle, #6366f1 0%, transparent 70%)',
-            top: '30%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            animation: 'aurora-drift-1 50s ease-in-out infinite',
-          }}
-        />
-        <div
-          className="absolute w-[500px] h-[500px] rounded-full opacity-[0.04]"
-          style={{
-            background: 'radial-gradient(circle, #8b5cf6 0%, transparent 70%)',
-            top: '60%',
-            left: '30%',
-            animation: 'aurora-drift-2 45s ease-in-out infinite',
-          }}
-        />
-      </div>
+    <div ref={containerRef} className="relative h-[500vh] bg-[#050506]">
+      {/* Fixed viewport container */}
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
+        
+        {/* Background ambient glow */}
+        <div className="absolute inset-0 pointer-events-none opacity-20">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80vw] h-[80vw] rounded-full bg-primary mix-blend-screen filter blur-[120px]" />
+        </div>
 
-      {/* ─── SCENE 1: Title Reveal ─── */}
-      <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
-        <motion.div
-          style={{ opacity: titleOpacity, y: titleY, scale: titleScale }}
-          className="text-center space-y-4"
+        {/* --- SCENE 1: Energy Gathers --- */}
+        <motion.div 
+          className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
+          style={{ opacity: scene1Opacity, scale: scene1Scale, filter: `blur(${scene1Blur}px)` }}
         >
-          <h1 className="text-6xl sm:text-8xl md:text-9xl font-black tracking-tighter text-white leading-none">
-            Life<span className="bg-gradient-to-r from-indigo-400 via-violet-400 to-purple-400 bg-clip-text text-transparent">OS</span>
-          </h1>
-          <p className="text-sm sm:text-base text-zinc-500 font-medium tracking-wide uppercase">
-            Your productivity operating system
-          </p>
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 2, ease: "easeOut" }}
+            className="w-1 h-1 rounded-full bg-primary shadow-[0_0_50px_20px_hsl(var(--primary))]"
+          />
+          <p className="mt-8 text-sm font-medium tracking-[0.3em] text-primary/70 uppercase">Energy Gathers</p>
         </motion.div>
-      </div>
 
-      {/* ─── SCENE 2: Logo Assembly ─── */}
-      <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
-        <motion.div
-          style={{
-            opacity: logoOpacity,
-            scale: logoScale,
-            rotate: logoRotate,
-          }}
-          className="relative"
+        {/* --- SCENE 2: Glass Layers Separate --- */}
+        <motion.div 
+          className="absolute inset-0 flex items-center justify-center pointer-events-none"
+          style={{ opacity: scene2Opacity }}
         >
-          {/* Staggered ring reveals */}
-          <motion.div style={{ opacity: ring1Opacity }} className="absolute inset-0 flex items-center justify-center">
-            <div className="w-[280px] h-[280px] rounded-full border border-indigo-500/20 animate-[arc-rotate-slow_60s_linear_infinite]" />
-          </motion.div>
-          <motion.div style={{ opacity: ring2Opacity }} className="absolute inset-0 flex items-center justify-center">
-            <div className="w-[200px] h-[200px] rounded-full border border-violet-500/25 animate-[arc-rotate-medium_40s_linear_infinite] border-dashed" />
-          </motion.div>
-          <motion.div style={{ opacity: ring3Opacity }} className="absolute inset-0 flex items-center justify-center">
-            <div className="w-[120px] h-[120px] rounded-full border border-indigo-400/30 animate-[arc-rotate-fast_25s_linear_infinite]" />
-          </motion.div>
-
-          <ArcReactorLogo size={160} animate={true} glowIntensity="high" />
-        </motion.div>
-      </div>
-
-      {/* ─── SCENE 3: Tagline ─── */}
-      <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
-        <motion.div
-          style={{ opacity: taglineOpacity, y: taglineY }}
-          className="text-center space-y-6 max-w-2xl px-6"
-        >
-          <p className="text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight">
-            Focus. Track. Achieve.
-          </p>
-          <p className="text-base sm:text-lg text-zinc-400 leading-relaxed max-w-lg mx-auto">
-            Tasks, habits, goals, notes, and deep work — unified in one elegant workspace.
-          </p>
-        </motion.div>
-      </div>
-
-      {/* ─── SCENE 4: Enter LifeOS ─── */}
-      <div className="fixed inset-0 flex items-center justify-center">
-        <motion.div
-          style={{ opacity: ctaOpacity, y: ctaY }}
-          className="text-center space-y-8 max-w-md px-6"
-        >
-          <motion.div style={{ scale: ctaLogoScale }}>
-            <ArcReactorLogo size={64} animate={true} glowIntensity="medium" className="mx-auto" />
-          </motion.div>
-
-          <div className="space-y-2">
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-              Enter LifeOS
-            </h2>
-            <p className="text-sm text-zinc-500">
-              Your productivity companion awaits.
+          <div className="relative w-[300px] h-[400px]">
+            <motion.div 
+              className="absolute inset-0 glass-panel border-r-0 rounded-r-none"
+              style={{ x: glassLeftX, opacity: glassLayerOpacity }}
+            />
+            <motion.div 
+              className="absolute inset-0 glass-panel border-l-0 rounded-l-none"
+              style={{ x: glassRightX, opacity: glassLayerOpacity }}
+            />
+            <p className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-sm font-medium tracking-[0.3em] text-white/70 uppercase whitespace-nowrap">
+              Systems Online
             </p>
           </div>
+        </motion.div>
 
-          <div className="space-y-3">
+        {/* --- SCENE 3: Core Assembles --- */}
+        <motion.div 
+          className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none"
+          style={{ opacity: scene3Opacity }}
+        >
+          <motion.div style={{ scale: logoScale, rotate: logoRotate }}>
+            <ArcReactorLogo size={120} animate={true} glowIntensity="high" />
+          </motion.div>
+        </motion.div>
+
+        {/* --- SCENE 4: Logo Locks & Reveal --- */}
+        <motion.div 
+          className="absolute inset-0 flex flex-col items-center justify-center z-10"
+          style={{ opacity: scene4Opacity, y: scene4Y }}
+        >
+          <motion.div style={{ scale: finalLogoScale }} className="mb-8 pointer-events-none">
+            <ArcReactorLogo size={80} animate={true} glowIntensity="medium" />
+          </motion.div>
+
+          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white mb-6">
+            LifeOS
+          </h1>
+          <p className="text-lg md:text-xl text-zinc-400 max-w-lg text-center mb-10 leading-relaxed font-medium">
+            Your premium productivity companion. <br/> Focus. Track. Achieve.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center gap-4 pointer-events-auto">
             <Button
               variant="glow"
               size="lg"
               onClick={() => navigate('/login')}
-              className="w-full sm:w-auto px-10 py-6 text-base font-bold gap-2 pointer-events-auto active:scale-[0.97] transition-transform"
+              className="gap-2 font-bold px-8 h-12 rounded-full"
             >
-              Get Started
-              <ArrowRight className="h-5 w-5" />
+              <span>Initialize Workflow</span>
+              <ArrowRight className="h-4 w-4" />
             </Button>
-
-            <div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate('/login')}
-                className="text-xs text-zinc-500 hover:text-zinc-300 gap-1.5 pointer-events-auto"
-              >
-                <ShieldCheck className="h-3.5 w-3.5" />
-                Try as Guest
-              </Button>
-            </div>
+            
+            <Button
+              variant="ghost"
+              size="lg"
+              onClick={() => navigate('/login')}
+              className="gap-2 font-semibold text-zinc-400 hover:text-white px-6 h-12 rounded-full"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              <span>Guest Access</span>
+            </Button>
           </div>
-
-          <p className="text-[10px] text-zinc-600 font-medium">
-            No credit card required · Free forever
-          </p>
         </motion.div>
-      </div>
 
-      {/* Scroll progress indicator */}
-      <motion.div
-        className="fixed bottom-8 left-1/2 -translate-x-1/2 pointer-events-none"
-        style={{
-          opacity: useTransform(scrollYProgress, [0, 0.05, 0.9, 1], [1, 1, 1, 0]),
-        }}
-      >
-        <div className="flex flex-col items-center gap-2">
-          <motion.div
-            animate={{ y: [0, 6, 0] }}
-            transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-            className="w-5 h-8 rounded-full border border-zinc-700 flex items-start justify-center pt-1.5"
-          >
-            <div className="w-1 h-1.5 rounded-full bg-zinc-500" />
-          </motion.div>
-          <span className="text-[10px] text-zinc-600 font-medium tracking-wider uppercase">Scroll</span>
-        </div>
-      </motion.div>
+        {/* Scroll Indicator */}
+        <motion.div 
+          className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 pointer-events-none"
+          style={{ opacity: useTransform(scrollYProgress, [0, 0.1, 0.9, 1], [1, 0, 0, 0]) }}
+        >
+          <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-zinc-500">Scroll to Ignite</span>
+          <div className="w-px h-8 bg-gradient-to-b from-primary/50 to-transparent" />
+        </motion.div>
+
+      </div>
     </div>
   )
 }

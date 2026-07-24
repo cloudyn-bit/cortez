@@ -46,7 +46,7 @@ export function Navbar({ onToggleSidebar, isSidebarOpen, onOpenCommandPalette }:
   const breadcrumb = getBreadcrumb()
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-white/[0.04] bg-[#050506]/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 w-full border-b glass-panel rounded-none">
       <div className="flex h-14 items-center justify-between px-4 sm:px-6">
         {/* Left: Logo + Breadcrumb */}
         <div className="flex items-center space-x-3">

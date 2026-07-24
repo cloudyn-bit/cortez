@@ -1,6 +1,7 @@
 import { useEffect, lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from '@/context/AuthContext'
+import { PersonalizationProvider } from '@/context/PersonalizationProvider'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { usePomodoroStore } from '@/store/usePomodoroStore'
@@ -17,6 +18,7 @@ const GoalsPage = lazy(() => import('@/pages/GoalsPage').then((m) => ({ default:
 const TasksPage = lazy(() => import('@/pages/TasksPage').then((m) => ({ default: m.TasksPage })))
 const HabitsPage = lazy(() => import('@/pages/HabitsPage').then((m) => ({ default: m.HabitsPage })))
 const SettingsPage = lazy(() => import('@/pages/SettingsPage').then((m) => ({ default: m.SettingsPage })))
+const PersonalizationPage = lazy(() => import('@/pages/PersonalizationPage').then((m) => ({ default: m.PersonalizationPage })))
 const NotFoundPage = lazy(() => import('@/pages/NotFoundPage').then((m) => ({ default: m.NotFoundPage })))
 
 function GlobalTimerLoop() {
@@ -50,8 +52,9 @@ function PageLoadingFallback() {
 export function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <GlobalTimerLoop />
+      <PersonalizationProvider>
+        <AuthProvider>
+          <GlobalTimerLoop />
         <Suspense fallback={<PageLoadingFallback />}>
           <Routes>
             {/* Public routes */}
@@ -73,6 +76,7 @@ export function App() {
               <Route path="/goals" element={<GoalsPage />} />
               <Route path="/tasks" element={<TasksPage />} />
               <Route path="/habits" element={<HabitsPage />} />
+              <Route path="/personalization" element={<PersonalizationPage />} />
               <Route path="/settings" element={<SettingsPage />} />
             </Route>
 
@@ -80,7 +84,8 @@ export function App() {
             <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
-      </AuthProvider>
+        </AuthProvider>
+      </PersonalizationProvider>
     </BrowserRouter>
   )
 }

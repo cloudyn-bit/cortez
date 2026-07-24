@@ -15,6 +15,7 @@ import {
   FileText,
   Timer,
   BarChart3,
+  Palette,
 } from 'lucide-react'
 
 interface SidebarProps {
@@ -41,6 +42,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     { label: 'Notes', path: '/notes', icon: FileText },
     { label: 'Focus', path: '/pomodoro', icon: Timer, badge: isRunning ? 'Live' : null },
     { label: 'Analytics', path: '/analytics', icon: BarChart3 },
+    { label: 'Appearance', path: '/personalization', icon: Palette },
     { label: 'Settings', path: '/settings', icon: Settings },
   ]
 
@@ -59,19 +61,19 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               to={item.path}
               onClick={onClose}
               className={cn(
-                "flex items-center justify-between rounded-lg px-3 py-2 text-[13px] font-medium transition-all duration-200 group",
+                "flex items-center justify-between rounded-[var(--radius)] px-3 py-[calc(0.5rem*var(--density))] text-[13px] font-medium transition-all duration-[calc(200ms*var(--anim-speed))] group",
                 isActive
-                  ? "bg-white/[0.04] text-white"
-                  : "text-zinc-500 hover:bg-white/[0.03] hover:text-zinc-300"
+                  ? "bg-primary/10 text-primary shadow-inner shadow-primary/20"
+                  : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
               )}
             >
               <div className="flex items-center space-x-3">
                 {/* Active indicator — subtle left glow */}
                 <div className="relative">
                   {isActive && (
-                    <div className="absolute -left-[18px] top-1/2 -translate-y-1/2 h-4 w-[2px] rounded-full bg-indigo-400" />
+                    <div className="absolute -left-[18px] top-1/2 -translate-y-1/2 h-4 w-[3px] rounded-full bg-primary shadow-[0_0_10px_hsl(var(--primary)/0.6)]" />
                   )}
-                  <Icon className={cn("h-4 w-4", isActive ? "text-indigo-400" : "text-zinc-600 group-hover:text-zinc-400")} />
+                  <Icon className={cn("h-4 w-4 transition-colors duration-[calc(200ms*var(--anim-speed))]", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
                 </div>
                 <span>{item.label}</span>
               </div>
@@ -103,7 +105,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex w-56 flex-col border-r border-white/[0.04] bg-[#050506]/60 backdrop-blur-xl shrink-0">
+      <aside className="hidden md:flex w-[calc(14rem*var(--density))] flex-col border-r glass-panel shrink-0 rounded-none z-20">
         {content}
       </aside>
 
