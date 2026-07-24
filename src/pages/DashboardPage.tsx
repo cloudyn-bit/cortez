@@ -9,6 +9,7 @@ import { TodayHabitsWidget } from '@/components/habits/TodayHabitsWidget'
 import { FeaturedGoalWidget } from '@/components/goals/FeaturedGoalWidget'
 import { RecentNotesWidget } from '@/components/notes/RecentNotesWidget'
 import { DashboardPomodoroWidget } from '@/components/pomodoro/DashboardPomodoroWidget'
+import { ProductivityScoreWidget } from '@/components/analytics/ProductivityScoreWidget'
 import {
   Sparkles,
   BookOpen,
@@ -58,8 +59,8 @@ export function DashboardPage() {
 
   return (
     <PageContainer
-      title="Study Workspace"
-      description="Manage your focus timer, study notes, targets, daily habits, and task deadlines."
+      title="Cortez Workspace"
+      description="Manage your productivity analytics, focus timer, study notes, targets, daily habits, and task deadlines."
       action={
         <Button
           variant="glow"
@@ -75,13 +76,16 @@ export function DashboardPage() {
           ) : (
             <>
               <Plus className="h-4 w-4" />
-              <span>New Study Session</span>
+              <span>New Session</span>
             </>
           )}
         </Button>
       }
     >
-      {/* Top Pomodoro Timer Focus Widget */}
+      {/* Top Productivity Score Widget */}
+      <ProductivityScoreWidget />
+
+      {/* Pomodoro Timer Focus Widget */}
       <DashboardPomodoroWidget />
 
       {/* Featured Goal Focus Widget */}
@@ -144,7 +148,7 @@ export function DashboardPage() {
         </Card>
       ) : (
         <div className="space-y-6">
-          <h3 className="text-lg font-bold text-foreground">Recent Study Sessions</h3>
+          <h3 className="text-lg font-bold text-foreground">Recent Sessions</h3>
           {/* Recent Sessions Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {mockSessions.map((session) => (
@@ -201,9 +205,9 @@ export function DashboardPage() {
             <div className="mx-auto h-12 w-12 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20">
               <Calendar className="h-6 w-6" />
             </div>
-            <h3 className="text-base font-semibold text-foreground">Have a new lecture or assignment?</h3>
+            <h3 className="text-base font-semibold text-foreground">Have a new lecture or project notes?</h3>
             <p className="text-xs text-muted-foreground max-w-md mx-auto">
-              Paste your raw notes to generate instant flashcards, quizzes, and a spaced repetition plan.
+              Paste raw notes to generate flashcards, quizzes, and a spaced repetition plan.
             </p>
             <Button variant="outline" size="sm" onClick={() => setActiveTab('new')} className="gap-1.5 text-xs font-semibold">
               <Plus className="h-4 w-4" />

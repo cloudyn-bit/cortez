@@ -17,7 +17,8 @@ import {
   Flame,
   Target,
   FileText,
-  Timer
+  Timer,
+  BarChart3
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -42,6 +43,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navItems = [
     { label: 'Home', path: '/', icon: Home },
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { label: 'Analytics', path: '/analytics', icon: BarChart3 },
     { label: 'Pomodoro', path: '/pomodoro', icon: Timer, badge: isRunning ? 'Active' : null },
     { label: 'Notes', path: '/notes', icon: FileText, badge: totalNotesCount > 0 ? totalNotesCount : null },
     { label: 'Goals', path: '/goals', icon: Target, badge: activeGoalCount > 0 ? activeGoalCount : null },
@@ -144,7 +146,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
             <span>Gemini 1.5 Engine</span>
           </div>
           <p className="text-[11px] text-muted-foreground mt-1">
-            Active recall workspace ready
+            Cortez active productivity engine
           </p>
         </div>
       </div>

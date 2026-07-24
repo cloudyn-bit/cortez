@@ -6,6 +6,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { LandingPage } from '@/pages/LandingPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
+import { AnalyticsPage } from '@/pages/AnalyticsPage'
 import { PomodoroPage } from '@/pages/PomodoroPage'
 import { NotesPage } from '@/pages/NotesPage'
 import { GoalsPage } from '@/pages/GoalsPage'
@@ -52,6 +53,7 @@ export function App() {
             }
           >
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/pomodoro" element={<PomodoroPage />} />
             <Route path="/notes" element={<NotesPage />} />
             <Route path="/goals" element={<GoalsPage />} />
