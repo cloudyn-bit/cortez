@@ -2,6 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useTaskStore } from '@/store/useTaskStore'
 import { useHabitStore } from '@/store/useHabitStore'
+import { useGoalStore } from '@/store/useGoalStore'
 import {
   LayoutDashboard,
   Settings,
@@ -11,7 +12,8 @@ import {
   BookOpenCheck,
   ChevronRight,
   CheckSquare,
-  Flame
+  Flame,
+  Target
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -24,13 +26,16 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const location = useLocation()
   const { tasks } = useTaskStore()
   const { habits } = useHabitStore()
+  const { goals } = useGoalStore()
 
   const pendingTaskCount = tasks.filter((t) => !t.completed).length
   const activeHabitCount = habits.length
+  const activeGoalCount = goals.filter((g) => g.progress < 100).length
 
   const navItems = [
     { label: 'Home', path: '/', icon: Home },
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { label: 'Goals', path: '/goals', icon: Target, badge: activeGoalCount > 0 ? activeGoalCount : null },
     { label: 'Tasks', path: '/tasks', icon: CheckSquare, badge: pendingTaskCount > 0 ? pendingTaskCount : null },
     { label: 'Habits', path: '/habits', icon: Flame, badge: activeHabitCount > 0 ? activeHabitCount : null },
     { label: 'Settings', path: '/settings', icon: Settings },
