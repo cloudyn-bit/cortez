@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuth } from '@/context/AuthContext'
 import { useTheme } from '@/context/ThemeProvider'
+import { NavbarMiniTimer } from '@/components/pomodoro/NavbarMiniTimer'
 import { Button } from '@/components/ui/button'
 import {
   Sparkles,
@@ -30,6 +31,11 @@ export function Navbar({ onToggleSidebar, isSidebarOpen }: NavbarProps) {
   const getBreadcrumb = () => {
     const path = location.pathname
     if (path === '/dashboard') return 'Dashboard'
+    if (path === '/notes') return 'Notes Workspace'
+    if (path === '/goals') return 'Goal Management'
+    if (path === '/tasks') return 'Task Manager'
+    if (path === '/habits') return 'Habit Tracker'
+    if (path === '/pomodoro') return 'Pomodoro Timer'
     if (path.startsWith('/session')) return 'Workspace Session'
     if (path === '/settings') return 'Settings'
     return ''
@@ -73,8 +79,11 @@ export function Navbar({ onToggleSidebar, isSidebarOpen }: NavbarProps) {
           )}
         </div>
 
-        {/* Right side: Actions & User Dropdown */}
-        <div className="flex items-center space-x-2">
+        {/* Right side: Actions, Navbar Mini Timer & User Dropdown */}
+        <div className="flex items-center space-x-3">
+          {/* Navbar Mini Timer */}
+          <NavbarMiniTimer />
+
           {/* New Session CTA button if authenticated */}
           {user && (
             <Link to="/dashboard">

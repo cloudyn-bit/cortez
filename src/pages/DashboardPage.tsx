@@ -8,6 +8,7 @@ import { TodayTasksWidget } from '@/components/tasks/TodayTasksWidget'
 import { TodayHabitsWidget } from '@/components/habits/TodayHabitsWidget'
 import { FeaturedGoalWidget } from '@/components/goals/FeaturedGoalWidget'
 import { RecentNotesWidget } from '@/components/notes/RecentNotesWidget'
+import { DashboardPomodoroWidget } from '@/components/pomodoro/DashboardPomodoroWidget'
 import {
   Sparkles,
   BookOpen,
@@ -58,7 +59,7 @@ export function DashboardPage() {
   return (
     <PageContainer
       title="Study Workspace"
-      description="Manage your study notes, targets, daily habits, and task deadlines."
+      description="Manage your focus timer, study notes, targets, daily habits, and task deadlines."
       action={
         <Button
           variant="glow"
@@ -80,6 +81,9 @@ export function DashboardPage() {
         </Button>
       }
     >
+      {/* Top Pomodoro Timer Focus Widget */}
+      <DashboardPomodoroWidget />
+
       {/* Featured Goal Focus Widget */}
       <FeaturedGoalWidget />
 

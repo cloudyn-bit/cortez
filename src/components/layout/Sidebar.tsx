@@ -4,6 +4,7 @@ import { useTaskStore } from '@/store/useTaskStore'
 import { useHabitStore } from '@/store/useHabitStore'
 import { useGoalStore } from '@/store/useGoalStore'
 import { useNoteStore } from '@/store/useNoteStore'
+import { usePomodoroStore } from '@/store/usePomodoroStore'
 import {
   LayoutDashboard,
   Settings,
@@ -15,7 +16,8 @@ import {
   CheckSquare,
   Flame,
   Target,
-  FileText
+  FileText,
+  Timer
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -30,6 +32,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { habits } = useHabitStore()
   const { goals } = useGoalStore()
   const { notes } = useNoteStore()
+  const { isRunning } = usePomodoroStore()
 
   const pendingTaskCount = tasks.filter((t) => !t.completed).length
   const activeHabitCount = habits.length
@@ -39,6 +42,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const navItems = [
     { label: 'Home', path: '/', icon: Home },
     { label: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
+    { label: 'Pomodoro', path: '/pomodoro', icon: Timer, badge: isRunning ? 'Active' : null },
     { label: 'Notes', path: '/notes', icon: FileText, badge: totalNotesCount > 0 ? totalNotesCount : null },
     { label: 'Goals', path: '/goals', icon: Target, badge: activeGoalCount > 0 ? activeGoalCount : null },
     { label: 'Tasks', path: '/tasks', icon: CheckSquare, badge: pendingTaskCount > 0 ? pendingTaskCount : null },
