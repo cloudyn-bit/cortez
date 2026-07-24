@@ -67,7 +67,7 @@ export function Navbar({ onToggleSidebar, isSidebarOpen }: NavbarProps) {
               </div>
             </div>
             <span className="bg-gradient-to-r from-white via-slate-200 to-slate-400 bg-clip-text text-transparent font-extrabold tracking-tight">
-              StudyPilot <span className="text-indigo-400">AI</span>
+              Cortez
             </span>
           </Link>
 
@@ -124,7 +124,7 @@ export function Navbar({ onToggleSidebar, isSidebarOpen }: NavbarProps) {
                 <div className="absolute right-0 mt-2 w-56 rounded-lg border border-border bg-card p-1 shadow-xl z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <div className="px-3 py-2 border-b border-border/50 text-xs">
                     <p className="font-semibold text-foreground truncate">
-                      {user.user_metadata?.full_name || 'StudyPilot Student'}
+                      {user.user_metadata?.full_name || 'Cortez User'}
                     </p>
                     <p className="text-muted-foreground truncate">{user.email}</p>
                     {isDemoUser && (

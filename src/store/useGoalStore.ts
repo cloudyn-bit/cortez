@@ -205,7 +205,7 @@ export const useGoalStore = create<GoalState>()(
       },
     }),
     {
-      name: 'studypilot-goals-storage',
+      name: 'cortez-goals-storage',
     }
   )
 )

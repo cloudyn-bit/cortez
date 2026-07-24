@@ -6,7 +6,7 @@ import '@/styles/globals.css'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <ThemeProvider defaultTheme="dark" storageKey="studypilot-theme">
+    <ThemeProvider defaultTheme="dark" storageKey="cortez-theme">
       <App />
     </ThemeProvider>
   </React.StrictMode>,

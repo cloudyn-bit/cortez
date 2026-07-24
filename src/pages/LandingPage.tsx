@@ -49,7 +49,7 @@ export function LandingPage() {
               </div>
             </div>
             <span className="text-xl font-extrabold tracking-tight text-white">
-              StudyPilot <span className="text-indigo-400">AI</span>
+              Cortez
             </span>
           </div>
 
@@ -129,7 +129,7 @@ export function LandingPage() {
               Everything You Need To Master Any Topic
             </h2>
             <p className="text-zinc-400 max-w-xl mx-auto text-sm sm:text-base">
-              Say goodbye to passive reading. StudyPilot AI turns passive notes into active recall workouts.
+              Cortez helps you stay productive, focused, and organized across LifeOS.
             </p>
           </div>
 
@@ -159,7 +159,7 @@ export function LandingPage() {
       {/* Footer */}
       <footer className="mt-auto border-t border-white/10 py-8 px-6 text-center text-xs text-zinc-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p>© {new Date().getFullYear()} StudyPilot AI. Built for high-performance students.</p>
+          <p>© {new Date().getFullYear()} Cortez. Your productivity companion.</p>
           <div className="flex items-center space-x-4 text-zinc-400">
             <Link to="/login" className="hover:text-white transition-colors">Sign In</Link>
             <Link to="/dashboard" className="hover:text-white transition-colors">Dashboard</Link>

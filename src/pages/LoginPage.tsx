@@ -95,8 +95,8 @@ export function LoginPage() {
               <Sparkles className="h-6 w-6 text-indigo-400" />
             </div>
           </div>
-          <h1 className="text-2xl font-extrabold text-white">StudyPilot AI</h1>
-          <p className="text-xs text-zinc-400">Your AI-powered personal tutor</p>
+          <h1 className="text-2xl font-extrabold text-white">Cortez</h1>
+          <p className="text-xs text-zinc-400">Your productivity companion</p>
         </div>
 
         {/* Auth Card */}

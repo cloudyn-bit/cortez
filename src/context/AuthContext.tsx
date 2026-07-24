@@ -25,14 +25,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Check demo user in localStorage
-    const savedDemoUser = localStorage.getItem('studypilot_demo_user')
+    const savedDemoUser = localStorage.getItem('cortez_demo_user')
     if (savedDemoUser) {
       setIsDemoUser(true)
       setUser({
         id: 'demo-user-123',
-        email: 'demo@studypilot.ai',
+        email: 'demo@cortez.app',
         app_metadata: {},
-        user_metadata: { full_name: 'Demo Student' },
+        user_metadata: { full_name: 'Demo User' },
         aud: 'authenticated',
         created_at: new Date().toISOString()
       } as User)
@@ -117,13 +117,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const signInAsGuest = () => {
-    localStorage.setItem('studypilot_demo_user', 'true')
+    localStorage.setItem('cortez_demo_user', 'true')
     setIsDemoUser(true)
     setUser({
       id: 'demo-user-123',
-      email: 'demo@studypilot.ai',
+      email: 'demo@cortez.app',
       app_metadata: {},
-      user_metadata: { full_name: 'Demo Student' },
+      user_metadata: { full_name: 'Demo User' },
       aud: 'authenticated',
       created_at: new Date().toISOString()
     } as User)
@@ -131,7 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     if (isDemoUser) {
-      localStorage.removeItem('studypilot_demo_user')
+      localStorage.removeItem('cortez_demo_user')
       setIsDemoUser(false)
       setUser(null)
       setSession(null)

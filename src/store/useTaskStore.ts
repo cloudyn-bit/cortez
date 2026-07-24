@@ -48,7 +48,7 @@ const defaultSeedTasks: Task[] = [
   {
     id: 'task-3',
     title: 'Summarize Organic Chemistry Reactions',
-    description: 'Paste chapter 4 notes into StudyPilot AI to extract SN1 & SN2 mechanisms.',
+    description: 'Paste chapter 4 notes into Cortez to extract key topics.',
     priority: 'medium',
     category: 'study',
     dueDate: new Date(Date.now() + 86400000 * 2).toISOString().split('T')[0],
@@ -117,7 +117,7 @@ export const useTaskStore = create<TaskState>()(
       },
     }),
     {
-      name: 'studypilot-tasks-storage',
+      name: 'cortez-tasks-storage',
     }
   )
 )

@@ -102,7 +102,7 @@ export const useHabitStore = create<HabitState>()(
       },
     }),
     {
-      name: 'studypilot-habits-storage',
+      name: 'cortez-habits-storage',
     }
   )
 )

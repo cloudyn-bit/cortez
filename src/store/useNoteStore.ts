@@ -139,7 +139,7 @@ export const useNoteStore = create<NoteState>()(
       },
     }),
     {
-      name: 'studypilot-notes-storage',
+      name: 'cortez-notes-storage',
     }
   )
 )
