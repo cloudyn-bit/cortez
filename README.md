@@ -147,65 +147,6 @@ No external backend is required for the MVP.
 
 ---
 
-## 🚀 Getting Started
-
-Clone the repository:
-
-```bash
-git clone https://github.com/YOUR_USERNAME/lifeos.git
-```
-
-Navigate into the project:
-
-```bash
-cd lifeos
-```
-
-Install dependencies:
-
-```bash
-npm install
-```
-
-Start the development server:
-
-```bash
-npm run dev
-```
-
-Build for production:
-
-```bash
-npm run build
-```
-
-Preview the production build:
-
-```bash
-npm run preview
-```
-
----
-
-## 📂 Project Structure
-
-```
-src/
-│
-├── components/
-├── pages/
-├── layouts/
-├── hooks/
-├── stores/
-├── services/
-├── utils/
-├── types/
-├── assets/
-└── App.tsx
-```
-
----
-
 ## 🌟 Highlights
 
 - Fully responsive
@@ -231,12 +172,6 @@ src/
 - Mobile application
 - Notifications
 - Theme customization
-
----
-
-## 📸 Screenshots
-
-_Add screenshots of your dashboard, analytics, tasks, habits, and Pomodoro pages here._
 
 ---
 
