@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { cn } from '@/lib/utils'
+import { TextAnimate } from '@/components/ui/TextAnimate'
 
 interface PageContainerProps {
   children: React.ReactNode
@@ -67,13 +68,13 @@ export function PageContainer({
           <div className="space-y-1.5">
             {title && (
               <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
-                {title}
+                <TextAnimate text={title} animation="blurInUp" by="character" once />
               </h1>
             )}
             {description && (
-              <p className="text-[13px] text-zinc-500 max-w-2xl leading-relaxed">
-                {description}
-              </p>
+              <div className="text-[13px] text-zinc-500 max-w-2xl leading-relaxed">
+                <TextAnimate text={description} animation="blurInUp" by="word" once />
+              </div>
             )}
           </div>
           {action && <div className="flex items-center space-x-3 shrink-0">{action}</div>}

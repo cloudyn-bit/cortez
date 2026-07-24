@@ -3,6 +3,9 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/context/AuthContext'
 import { Input } from '@/components/ui/input'
+import { MagicCard } from '@/components/ui/MagicCard'
+import { ShinyButton } from '@/components/ui/ShinyButton'
+import { AuroraBackground } from '@/components/ui/AuroraBackground'
 import { Mail, Lock, ArrowRight, Loader2, CheckCircle, AlertCircle, ShieldCheck } from 'lucide-react'
 
 // Spring configuration for smooth layout morphing
@@ -83,23 +86,7 @@ export function LoginPage() {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Ambient breathing background */}
-      <motion.div 
-        className="absolute w-[600px] h-[600px] rounded-full pointer-events-none mix-blend-screen"
-        animate={{
-          scale: [1, 1.1, 1],
-          opacity: [0.1, 0.15, 0.1],
-        }}
-        transition={{
-          duration: 8,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-        style={{
-          background: 'radial-gradient(circle, rgba(34,211,238,0.4) 0%, rgba(0,0,0,0) 70%)',
-          filter: 'blur(80px)'
-        }}
-      />
+      <AuroraBackground />
 
       {/* Main Glass Panel */}
       <AnimatePresence>
@@ -107,8 +94,9 @@ export function LoginPage() {
           <motion.div
             layoutId="auth-card"
             transition={morphSpring}
-            className="relative z-10 w-full max-w-[440px] rounded-[32px] bg-white/[0.02] border border-white/[0.05] shadow-[0_0_80px_rgba(0,0,0,0.8)] backdrop-blur-3xl overflow-hidden p-8 sm:p-12"
+            className="relative z-10 w-full max-w-[440px]"
           >
+            <MagicCard className="p-8 sm:p-12 border-white/5 bg-background/20" gradientColor="rgba(34,211,238,0.15)">
             {/* Animated Reflection */}
             <motion.div 
               className="absolute -top-[100%] -left-[100%] w-[300%] h-[300%] pointer-events-none transform -rotate-45"
@@ -241,23 +229,20 @@ export function LoginPage() {
                 </motion.div>
 
                 <motion.div custom={2} variants={staggerItem} initial="hidden" animate="visible" className="pt-2">
-                  <button
+                  <ShinyButton
                     type="submit"
                     disabled={loading}
-                    className="relative w-full h-12 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white font-bold text-sm tracking-wide overflow-hidden group transition-all duration-300 active:scale-[0.98] disabled:opacity-70 disabled:active:scale-100"
+                    className="w-full h-12"
                   >
-                    <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/0 via-cyan-300/30 to-cyan-400/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform -skew-x-12" />
-                    <div className="relative flex items-center justify-center gap-2">
-                      {loading ? (
-                        <Loader2 className="h-5 w-5 animate-spin" />
-                      ) : (
-                        <>
-                          <span>{mode === 'signup' ? 'Create Account' : 'Sign In'}</span>
-                          <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                        </>
-                      )}
-                    </div>
-                  </button>
+                    {loading ? (
+                      <Loader2 className="h-5 w-5 animate-spin" />
+                    ) : (
+                      <>
+                        <span>{mode === 'signup' ? 'Create Account' : 'Sign In'}</span>
+                        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </>
+                    )}
+                  </ShinyButton>
                 </motion.div>
               </form>
 
@@ -276,6 +261,7 @@ export function LoginPage() {
                 </button>
               </motion.div>
             </div>
+            </MagicCard>
           </motion.div>
         )}
       </AnimatePresence>

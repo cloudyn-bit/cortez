@@ -3,13 +3,30 @@ import { useOutlet, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
-import { AuroraBackground } from '@/components/ui/AuroraBackground'
-import { CommandPalette } from '@/components/assistant/CommandPalette'
 import { CortezReminderBanner } from '@/components/assistant/CortezReminderBanner'
+import { CommandPalette } from '@/components/assistant/CommandPalette'
 import { TaskModal } from '@/components/tasks/TaskModal'
 import { HabitModal } from '@/components/habits/HabitModal'
 import { GoalModal } from '@/components/goals/GoalModal'
 import { NoteEditorModal } from '@/components/notes/NoteEditorModal'
+import { Dock } from '@/components/ui/Dock'
+import {
+  LayoutDashboard,
+  CheckSquare,
+  Flame,
+  Target,
+  FileText,
+  Timer
+} from 'lucide-react'
+
+const dockItems = [
+  { title: 'Dashboard', icon: LayoutDashboard, href: '/dashboard' },
+  { title: 'Tasks', icon: CheckSquare, href: '/tasks' },
+  { title: 'Habits', icon: Flame, href: '/habits' },
+  { title: 'Goals', icon: Target, href: '/goals' },
+  { title: 'Notes', icon: FileText, href: '/notes' },
+  { title: 'Pomodoro', icon: Timer, href: '/pomodoro' },
+]
 
 export function DashboardLayout() {
   const location = useLocation()
@@ -42,9 +59,6 @@ export function DashboardLayout() {
       transition={{ type: "spring", stiffness: 100, damping: 20, mass: 1 }}
       className="min-h-screen bg-[#020203] flex flex-col relative"
     >
-      {/* Ambient aurora background */}
-      <AuroraBackground />
-
       {/* Non-intrusive reminder banner */}
       <CortezReminderBanner />
 
@@ -54,17 +68,21 @@ export function DashboardLayout() {
         onOpenCommandPalette={() => setIsPaletteOpen(true)}
       />
 
-      <div className="flex flex-1 overflow-hidden relative z-10">
-        <Sidebar
-          isOpen={sidebarOpen}
-          onClose={() => setSidebarOpen(false)}
-        />
+      <div className="flex flex-1 overflow-hidden relative z-10 pb-16 md:pb-0">
+        <div className="hidden md:block">
+          <Sidebar
+            isOpen={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+          />
+        </div>
         <main className="flex-1 overflow-y-auto relative">
           <AnimatePresence mode="popLayout">
             {outlet && React.cloneElement(outlet, { key: location.pathname })}
           </AnimatePresence>
         </main>
       </div>
+
+      <Dock items={dockItems} />
 
       {/* Global Command Palette */}
       <CommandPalette

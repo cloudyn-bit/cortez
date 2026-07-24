@@ -5,6 +5,7 @@ import { useHabitStore } from '@/store/useHabitStore'
 import { useGoalStore } from '@/store/useGoalStore'
 import { X, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { TypingAnimation } from '@/components/ui/TypingAnimation'
 
 export function CortezReminderBanner() {
   const { tasks } = useTaskStore()
@@ -59,7 +60,7 @@ export function CortezReminderBanner() {
       >
         <div className="flex items-center space-x-3 truncate">
           <div className="h-1 w-1 rounded-full bg-indigo-400 shrink-0" />
-          <span className="font-medium truncate">{reminder.title}</span>
+          <TypingAnimation text={reminder.title} idKey={reminder.title} className="font-medium truncate" speed={40} />
           <Link to={reminder.link} className="text-indigo-400 hover:text-indigo-300 flex items-center gap-0.5 shrink-0 font-semibold transition-colors">
             <span>View</span>
             <ArrowRight className="h-3 w-3" />

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { PageContainer } from '@/components/layout/PageContainer'
-import { Button } from '@/components/ui/button'
+import { ShinyButton } from '@/components/ui/ShinyButton'
+import { BlurFade } from '@/components/ui/BlurFade'
 import { CortezAssistantCard } from '@/components/assistant/CortezAssistantCard'
 import { ProductivityScoreWidget } from '@/components/analytics/ProductivityScoreWidget'
 import { DashboardPomodoroWidget } from '@/components/pomodoro/DashboardPomodoroWidget'
@@ -25,44 +26,50 @@ export function DashboardPage() {
       title="Dashboard"
       description="Your productivity overview."
       action={
-        <Button
-          variant="glow"
-          size="sm"
+        <ShinyButton
           onClick={() => setIsTaskModalOpen(true)}
-          className="gap-2 font-semibold"
+          className="gap-2 font-semibold text-xs py-2 px-4 h-9"
         >
           <PlusCircle className="h-4 w-4" />
           <span>New Task</span>
-        </Button>
+        </ShinyButton>
       }
     >
-      {/* Cortez Companion Card — full width */}
-      <CortezAssistantCard
-        onOpenTaskModal={() => setIsTaskModalOpen(true)}
-        onOpenHabitModal={() => setIsHabitModalOpen(true)}
-        onOpenGoalModal={() => setIsGoalModalOpen(true)}
-        onOpenNoteModal={() => setIsNoteModalOpen(true)}
-      />
+      <BlurFade delay={0.1}>
+        <CortezAssistantCard
+          onOpenTaskModal={() => setIsTaskModalOpen(true)}
+          onOpenHabitModal={() => setIsHabitModalOpen(true)}
+          onOpenGoalModal={() => setIsGoalModalOpen(true)}
+          onOpenNoteModal={() => setIsNoteModalOpen(true)}
+        />
+      </BlurFade>
 
-      {/* Productivity Score + Pomodoro — 2 column */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <ProductivityScoreWidget />
-        <DashboardPomodoroWidget />
+        <BlurFade delay={0.2}>
+          <ProductivityScoreWidget />
+        </BlurFade>
+        <BlurFade delay={0.3}>
+          <DashboardPomodoroWidget />
+        </BlurFade>
       </div>
 
-      {/* Featured Goal — full width */}
-      <FeaturedGoalWidget />
+      <BlurFade delay={0.4}>
+        <FeaturedGoalWidget />
+      </BlurFade>
 
-      {/* Tasks + Habits — 2 column */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <TodayTasksWidget />
-        <TodayHabitsWidget />
+        <BlurFade delay={0.5}>
+          <TodayTasksWidget />
+        </BlurFade>
+        <BlurFade delay={0.6}>
+          <TodayHabitsWidget />
+        </BlurFade>
       </div>
 
-      {/* Recent Notes — full width */}
-      <RecentNotesWidget />
+      <BlurFade delay={0.7}>
+        <RecentNotesWidget />
+      </BlurFade>
 
-      {/* Creation Modals */}
       <TaskModal isOpen={isTaskModalOpen} onClose={() => setIsTaskModalOpen(false)} />
       <HabitModal isOpen={isHabitModalOpen} onClose={() => setIsHabitModalOpen(false)} />
       <GoalModal isOpen={isGoalModalOpen} onClose={() => setIsGoalModalOpen(false)} />

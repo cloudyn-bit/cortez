@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
+import { DiaTextReveal } from '@/components/ui/DiaTextReveal'
+import { ShinyButton } from '@/components/ui/ShinyButton'
+
+// Persists during SPA navigation, resets on browser refresh
+let hasSeenIntro = false
+
 
 function ParticleSystem() {
   // Static random values to prevent hydration errors, but we are client-side so it's fine.
@@ -92,15 +97,20 @@ function PrecisionCore() {
 
 export function LandingPage() {
   const navigate = useNavigate()
-  const [stage, setStage] = useState(0)
+  const [stage, setStage] = useState(hasSeenIntro ? 4 : 0)
 
   // Orchestrate the timeline
   useEffect(() => {
+    if (hasSeenIntro) return
+
     // Stage 0: Initial dark screen + glowing point starts (0s)
     const t1 = setTimeout(() => setStage(1), 3500) // Logo mostly assembled, start text "LifeOS"
     const t2 = setTimeout(() => setStage(2), 5000) // "One dashboard."
     const t3 = setTimeout(() => setStage(3), 6500) // "Total control."
-    const t4 = setTimeout(() => setStage(4), 8000) // Show Enter button
+    const t4 = setTimeout(() => {
+      setStage(4)
+      hasSeenIntro = true
+    }, 8000) // Show Enter button
 
     return () => {
       clearTimeout(t1)
@@ -142,14 +152,7 @@ export function LandingPage() {
         <div className="mt-16 h-32 flex flex-col items-center justify-start text-center">
           <AnimatePresence>
             {stage >= 1 && (
-              <motion.h1 
-                className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-2"
-                initial={{ opacity: 0, y: 10, filter: 'blur(10px)' }}
-                animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                transition={{ duration: 1.5, ease: "easeOut" }}
-              >
-                LifeOS
-              </motion.h1>
+              <DiaTextReveal text="LifeOS" className="text-4xl md:text-5xl font-extrabold tracking-tight text-white mb-2" />
             )}
           </AnimatePresence>
 
@@ -184,20 +187,14 @@ export function LandingPage() {
         <AnimatePresence>
           {stage >= 4 && (
             <motion.div
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
+              initial={hasSeenIntro ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 1, type: "spring", stiffness: 100 }}
               className="mt-8 z-20"
             >
-              <Button
-                variant="glow"
-                size="lg"
-                onClick={() => navigate('/login')}
-                className="relative overflow-hidden group bg-white/5 hover:bg-white/10 border border-white/10 text-white shadow-2xl backdrop-blur-md rounded-full px-8 h-12 transition-all duration-300 hover:shadow-[0_0_40px_-10px_rgba(34,211,238,0.5)] hover:-translate-y-1 active:scale-95"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/0 via-cyan-400/10 to-cyan-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <span className="font-semibold tracking-wide">Enter LifeOS</span>
-              </Button>
+              <ShinyButton onClick={() => navigate('/login')} className="px-8 h-12 w-48 bg-white/5 border border-white/10 text-white backdrop-blur-md">
+                Enter LifeOS
+              </ShinyButton>
             </motion.div>
           )}
         </AnimatePresence>

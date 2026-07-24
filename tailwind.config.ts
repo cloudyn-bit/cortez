@@ -76,10 +76,15 @@ const config: Config = {
           '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
           '50%': { opacity: '0.7', transform: 'scale(1.03)' },
         },
+        shine: {
+          "0%": { transform: "translateX(-100%) skewX(-12deg)" },
+          "100%": { transform: "translateX(200%) skewX(-12deg)" },
+        }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
+        "shine": "shine 2s infinite linear",
         'rotate-slow': 'arc-rotate-slow 60s linear infinite',
         'rotate-medium': 'arc-rotate-medium 40s linear infinite',
         'rotate-fast': 'arc-rotate-fast 25s linear infinite',
