@@ -4,12 +4,17 @@ import { PageContainer } from '@/components/layout/PageContainer'
 import { Button } from '@/components/ui/button'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
+import { CortezAssistantCard } from '@/components/assistant/CortezAssistantCard'
+import { ProductivityScoreWidget } from '@/components/analytics/ProductivityScoreWidget'
+import { DashboardPomodoroWidget } from '@/components/pomodoro/DashboardPomodoroWidget'
+import { FeaturedGoalWidget } from '@/components/goals/FeaturedGoalWidget'
 import { TodayTasksWidget } from '@/components/tasks/TodayTasksWidget'
 import { TodayHabitsWidget } from '@/components/habits/TodayHabitsWidget'
-import { FeaturedGoalWidget } from '@/components/goals/FeaturedGoalWidget'
 import { RecentNotesWidget } from '@/components/notes/RecentNotesWidget'
-import { DashboardPomodoroWidget } from '@/components/pomodoro/DashboardPomodoroWidget'
-import { ProductivityScoreWidget } from '@/components/analytics/ProductivityScoreWidget'
+import { TaskModal } from '@/components/tasks/TaskModal'
+import { HabitModal } from '@/components/habits/HabitModal'
+import { GoalModal } from '@/components/goals/GoalModal'
+import { NoteEditorModal } from '@/components/notes/NoteEditorModal'
 import {
   Sparkles,
   BookOpen,
@@ -26,6 +31,12 @@ export function DashboardPage() {
   const [activeTab, setActiveTab] = useState<'sessions' | 'new'>('sessions')
   const [notesInput, setNotesInput] = useState('')
   const [titleInput, setTitleInput] = useState('')
+
+  // Creation modals state for Cortez quick actions
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false)
+  const [isHabitModalOpen, setIsHabitModalOpen] = useState(false)
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false)
+  const [isNoteModalOpen, setIsNoteModalOpen] = useState(false)
 
   const mockSessions = [
     {
@@ -82,7 +93,15 @@ export function DashboardPage() {
         </Button>
       }
     >
-      {/* Top Productivity Score Widget */}
+      {/* Top Cortez Productivity Companion Card */}
+      <CortezAssistantCard
+        onOpenTaskModal={() => setIsTaskModalOpen(true)}
+        onOpenHabitModal={() => setIsHabitModalOpen(true)}
+        onOpenGoalModal={() => setIsGoalModalOpen(true)}
+        onOpenNoteModal={() => setIsNoteModalOpen(true)}
+      />
+
+      {/* Productivity Score Widget */}
       <ProductivityScoreWidget />
 
       {/* Pomodoro Timer Focus Widget */}
@@ -216,6 +235,12 @@ export function DashboardPage() {
           </div>
         </div>
       )}
+
+      {/* Creation Modals */}
+      <TaskModal isOpen={isTaskModalOpen} onClose={() => setIsTaskModalOpen(false)} />
+      <HabitModal isOpen={isHabitModalOpen} onClose={() => setIsHabitModalOpen(false)} />
+      <GoalModal isOpen={isGoalModalOpen} onClose={() => setIsGoalModalOpen(false)} />
+      <NoteEditorModal isOpen={isNoteModalOpen} onClose={() => setIsNoteModalOpen(false)} />
     </PageContainer>
   )
 }

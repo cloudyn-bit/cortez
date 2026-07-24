@@ -13,15 +13,17 @@ import {
   Menu,
   X,
   ChevronRight,
-  BookOpen
+  Command,
+  Search
 } from 'lucide-react'
 
 interface NavbarProps {
   onToggleSidebar?: () => void
   isSidebarOpen?: boolean
+  onOpenCommandPalette?: () => void
 }
 
-export function Navbar({ onToggleSidebar, isSidebarOpen }: NavbarProps) {
+export function Navbar({ onToggleSidebar, isSidebarOpen, onOpenCommandPalette }: NavbarProps) {
   const { user, signOut, isDemoUser } = useAuth()
   const { theme, setTheme } = useTheme()
   const location = useLocation()
@@ -31,6 +33,7 @@ export function Navbar({ onToggleSidebar, isSidebarOpen }: NavbarProps) {
   const getBreadcrumb = () => {
     const path = location.pathname
     if (path === '/dashboard') return 'Dashboard'
+    if (path === '/analytics') return 'Analytics'
     if (path === '/notes') return 'Notes Workspace'
     if (path === '/goals') return 'Goal Management'
     if (path === '/tasks') return 'Task Manager'
@@ -79,20 +82,24 @@ export function Navbar({ onToggleSidebar, isSidebarOpen }: NavbarProps) {
           )}
         </div>
 
-        {/* Right side: Actions, Navbar Mini Timer & User Dropdown */}
+        {/* Right side: Actions, Search Command Trigger, Navbar Mini Timer & User Dropdown */}
         <div className="flex items-center space-x-3">
+          {/* Cmd + K Command Palette Trigger Button */}
+          {onOpenCommandPalette && (
+            <button
+              onClick={onOpenCommandPalette}
+              className="hidden sm:flex items-center space-x-2 rounded-lg border border-border/80 bg-secondary/40 px-2.5 py-1 text-xs text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
+            >
+              <Search className="h-3.5 w-3.5 text-indigo-400" />
+              <span className="text-[11px] font-medium">Search...</span>
+              <kbd className="pointer-events-none rounded border border-border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100 flex items-center gap-0.5">
+                <Command className="h-2.5 w-2.5" /> K
+              </kbd>
+            </button>
+          )}
+
           {/* Navbar Mini Timer */}
           <NavbarMiniTimer />
-
-          {/* New Session CTA button if authenticated */}
-          {user && (
-            <Link to="/dashboard">
-              <Button size="sm" variant="glow" className="hidden sm:inline-flex gap-1.5 text-xs font-semibold">
-                <BookOpen className="h-3.5 w-3.5" />
-                New Session
-              </Button>
-            </Link>
-          )}
 
           {/* Theme Toggle */}
           <Button
