@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge'
 import { TodayTasksWidget } from '@/components/tasks/TodayTasksWidget'
 import { TodayHabitsWidget } from '@/components/habits/TodayHabitsWidget'
 import { FeaturedGoalWidget } from '@/components/goals/FeaturedGoalWidget'
+import { RecentNotesWidget } from '@/components/notes/RecentNotesWidget'
 import {
   Sparkles,
   BookOpen,
@@ -57,7 +58,7 @@ export function DashboardPage() {
   return (
     <PageContainer
       title="Study Workspace"
-      description="Manage your study sessions, goals, daily habits, and task deadlines."
+      description="Manage your study notes, targets, daily habits, and task deadlines."
       action={
         <Button
           variant="glow"
@@ -87,6 +88,9 @@ export function DashboardPage() {
         <TodayTasksWidget />
         <TodayHabitsWidget />
       </div>
+
+      {/* Recent Notes Widget */}
+      <RecentNotesWidget />
 
       {activeTab === 'new' ? (
         <Card className="bg-card/70 border-border/80 shadow-xl max-w-3xl mx-auto">

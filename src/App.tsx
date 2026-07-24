@@ -5,6 +5,7 @@ import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { LandingPage } from '@/pages/LandingPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
+import { NotesPage } from '@/pages/NotesPage'
 import { GoalsPage } from '@/pages/GoalsPage'
 import { TasksPage } from '@/pages/TasksPage'
 import { HabitsPage } from '@/pages/HabitsPage'
@@ -30,6 +31,7 @@ export function App() {
             }
           >
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/notes" element={<NotesPage />} />
             <Route path="/goals" element={<GoalsPage />} />
             <Route path="/tasks" element={<TasksPage />} />
             <Route path="/habits" element={<HabitsPage />} />
