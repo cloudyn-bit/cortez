@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTaskStore } from '@/store/useTaskStore'
@@ -6,23 +6,15 @@ import { useHabitStore } from '@/store/useHabitStore'
 import { useGoalStore } from '@/store/useGoalStore'
 import { useNoteStore } from '@/store/useNoteStore'
 import { usePomodoroStore } from '@/store/usePomodoroStore'
+import { useProfileStore } from '@/hooks/useProfile'
 import { evaluateCortezContext } from '@/lib/assistant/context'
-import { getMotivationalMessage } from '@/lib/assistant/motivational'
-import { computeAnalytics } from '@/lib/analytics/engine'
 import { ArcReactorLogo } from '@/components/ui/ArcReactorLogo'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
+import { TypingAnimation } from '@/components/ui/TypingAnimation'
 import {
   ChevronDown,
-  Timer,
-  CheckSquare,
-  Flame,
-  Target,
-  FileText,
-  BarChart3,
   Lightbulb,
 } from 'lucide-react'
-import { Link } from 'react-router-dom'
 
 interface CortezAssistantCardProps {
   onOpenTaskModal?: () => void
@@ -38,6 +30,7 @@ export function CortezAssistantCard({
   onOpenNoteModal
 }: CortezAssistantCardProps) {
   const navigate = useNavigate()
+  const { profile } = useProfileStore()
   const { tasks } = useTaskStore()
   const { habits } = useHabitStore()
   const { goals } = useGoalStore()
@@ -46,25 +39,20 @@ export function CortezAssistantCard({
 
   const [isExpanded, setIsExpanded] = useState(true)
 
-  const contextDataRef = useRef(evaluateCortezContext(tasks, habits, goals, notes, pomodoroStats))
-  const analyticsRef = useRef(computeAnalytics(tasks, habits, goals, notes, pomodoroStats))
+  // Use memo to instantly compute context based on reactive data
+  const contextData = useMemo(() => {
+    return evaluateCortezContext(profile, tasks, habits, goals, notes, pomodoroStats)
+  }, [profile, tasks, habits, goals, notes, pomodoroStats])
 
-  const [message, setMessage] = useState('')
-
-  useEffect(() => {
-    const contextData = contextDataRef.current
-    const analytics = analyticsRef.current
-
-    const motivationalMessage = getMotivationalMessage({
-      timeOfDay: contextData.timeOfDay,
-      productivityScore: analytics.productivityScore,
-      hasCompletedAllTasks: contextData.dueTasksCount === 0 && contextData.completedTasksTodayCount > 0,
-      hasCompletedGoal: analytics.goalsCompleted > 0,
-      hasMissedHabits: contextData.totalHabitsCount > 0 && contextData.habitsCompletedTodayCount < contextData.totalHabitsCount,
-    }) || "Ready to make today count?"
-
-    setMessage(`${contextData.greeting}. ${motivationalMessage}`)
-  }, [])
+  const handleSuggestionClick = (action: string) => {
+    switch (action) {
+      case 'pomodoro': navigate('/pomodoro'); break;
+      case 'tasks': onOpenTaskModal?.(); break;
+      case 'habits': onOpenHabitModal?.(); break;
+      case 'goals': onOpenGoalModal?.(); break;
+      case 'notes': onOpenNoteModal?.(); break;
+    }
+  }
 
   return (
     <div className="relative overflow-hidden glass-panel border border-white/5 shadow-xl">
@@ -94,11 +82,12 @@ export function CortezAssistantCard({
           <div>
             <div className="flex items-center space-x-2">
               <h3 className="text-sm font-bold text-white tracking-tight">Cortez</h3>
-              <Badge variant="outline" className="text-[9px] bg-primary/10 text-primary border-primary/20 gap-1 font-semibold px-1.5 shadow-[0_0_8px_hsl(var(--primary)/0.2)]">
-                Active
-              </Badge>
+              <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/20 shadow-[0_0_8px_hsl(var(--cyan)/0.2)]">
+                <span className="h-1.5 w-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                <span className="text-[9px] font-semibold text-cyan-400 tracking-wide uppercase">Online</span>
+              </div>
             </div>
-            <p className="text-[11px] text-zinc-500 font-medium">Your productivity companion.</p>
+            <p className="text-[11px] text-zinc-500 font-medium">Your intelligence companion.</p>
           </div>
         </div>
 
@@ -128,22 +117,30 @@ export function CortezAssistantCard({
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
             className="px-5 pb-5 space-y-4 border-t border-white/[0.04] pt-4"
           >
-            <div className="relative pl-3 border-l-2 border-primary/40 py-1">
+            <div className="relative pl-3 border-l-2 border-primary/40 py-1 space-y-2">
+              <div className="text-xs text-white font-bold leading-relaxed">
+                <TypingAnimation 
+                  text={contextData.greeting}
+                  idKey={contextData.greeting}
+                  speed={30}
+                  className="text-xs font-bold text-white text-left block" 
+                />
+              </div>
               <p className="text-xs text-zinc-300 leading-relaxed font-medium">
-                {message}
+                {contextData.message}
               </p>
             </div>
 
             {/* Context insights — clean grid */}
-            {contextDataRef.current.insights.length > 0 && (
+            {contextData.insights.length > 0 && (
               <div className="space-y-2">
                 <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500 flex items-center gap-1.5">
                   <Lightbulb className="h-3 w-3 text-primary/70" />
-                  System Insights
+                  Smart Insights
                 </span>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                  {contextDataRef.current.insights.map((insight, idx) => (
+                  {contextData.insights.map((insight, idx) => (
                     <div key={idx} className="p-2.5 rounded-lg bg-black/20 border border-white/5 shadow-inner text-zinc-400 flex items-center gap-2">
                       <span className="h-1.5 w-1.5 rounded-full bg-primary/60 shadow-[0_0_5px_hsl(var(--primary)/0.5)] shrink-0" />
                       <span className="truncate">{insight}</span>
@@ -153,53 +150,19 @@ export function CortezAssistantCard({
               </div>
             )}
 
-            {/* Quick actions — glass buttons */}
-            <div className="flex flex-wrap gap-2 pt-1">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate('/pomodoro')}
-                className="h-8 text-[11px] gap-1.5"
-              >
-                <Timer className="h-3.5 w-3.5 text-primary" />
-                Focus
-              </Button>
-
-              {onOpenTaskModal && (
-                <Button variant="outline" size="sm" onClick={onOpenTaskModal} className="h-8 text-[11px] gap-1.5">
-                  <CheckSquare className="h-3.5 w-3.5 text-emerald-400" />
-                  Task
+            {/* Actionable Suggestion */}
+            {contextData.suggestion && (
+              <div className="pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handleSuggestionClick(contextData.suggestion!.action)}
+                  className="w-full h-9 bg-primary/5 hover:bg-primary/10 border-primary/20 hover:border-primary/40 text-primary transition-colors text-xs font-semibold shadow-[0_0_15px_hsl(var(--primary)/0.1)]"
+                >
+                  {contextData.suggestion.label}
                 </Button>
-              )}
-
-              {onOpenHabitModal && (
-                <Button variant="outline" size="sm" onClick={onOpenHabitModal} className="h-8 text-[11px] gap-1.5">
-                  <Flame className="h-3.5 w-3.5 text-amber-400" />
-                  Habit
-                </Button>
-              )}
-
-              {onOpenGoalModal && (
-                <Button variant="outline" size="sm" onClick={onOpenGoalModal} className="h-8 text-[11px] gap-1.5">
-                  <Target className="h-3.5 w-3.5 text-violet-400" />
-                  Goal
-                </Button>
-              )}
-
-              {onOpenNoteModal && (
-                <Button variant="outline" size="sm" onClick={onOpenNoteModal} className="h-8 text-[11px] gap-1.5">
-                  <FileText className="h-3.5 w-3.5 text-pink-400" />
-                  Note
-                </Button>
-              )}
-
-              <Link to="/analytics">
-                <Button variant="outline" size="sm" className="h-8 text-[11px] gap-1.5">
-                  <BarChart3 className="h-3.5 w-3.5 text-cyan-400" />
-                  Analytics
-                </Button>
-              </Link>
-            </div>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
