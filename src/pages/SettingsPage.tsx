@@ -12,7 +12,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 export function SettingsPage() {
   const { user, signOut, isDemoUser } = useAuth()
   const { theme, setTheme } = useTheme()
-  const { profile, updateProfile } = useProfileStore()
+  const { profile, updateProfile, loading: profileLoading } = useProfileStore()
   
   const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [editForm, setEditForm] = useState({ username: '', display_name: '', bio: '' })
@@ -97,7 +97,12 @@ export function SettingsPage() {
             )}
           </CardHeader>
           <CardContent className="space-y-4 text-sm relative">
-            <AnimatePresence mode="wait">
+            {profileLoading && !profile ? (
+              <div className="flex items-center justify-center py-10">
+                <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
+              </div>
+            ) : (
+              <AnimatePresence mode="wait">
               {isEditingProfile ? (
                 <motion.div
                   key="edit"
@@ -194,6 +199,7 @@ export function SettingsPage() {
                 </motion.div>
               )}
             </AnimatePresence>
+            )}
           </CardContent>
         </Card>
 

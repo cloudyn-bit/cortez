@@ -11,10 +11,47 @@ export interface UserProfile {
   updated_at?: string
 }
 
+export async function getOrCreateProfile(user: { id: string; email?: string; user_metadata?: any }): Promise<UserProfile | null> {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single()
+    
+  if (data && !error) return data
+  
+  if (error && error.code === 'PGRST116') {
+    // No profile exists, create one
+    const providedUsername = user.user_metadata?.username
+    const emailPrefix = user.email ? user.email.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '') : 'user'
+    const generatedUsername = `${emailPrefix}_${Math.floor(Math.random() * 10000)}`
+    
+    const newUsername = providedUsername || generatedUsername
+
+    const newProfile = {
+      id: user.id,
+      username: newUsername,
+      display_name: newUsername,
+      bio: '',
+      avatar_url: null
+    }
+
+    const { data: createdData, error: createError } = await supabase
+      .from('profiles')
+      .insert(newProfile)
+      .select('*')
+      .single()
+      
+    if (createdData && !createError) return createdData
+  }
+  
+  return null
+}
+
 interface ProfileState {
   profile: UserProfile | null
   loading: boolean
-  fetchProfile: (userId: string) => Promise<void>
+  fetchProfile: (user: { id: string; email?: string; user_metadata?: any }) => Promise<void>
   updateProfile: (updates: Partial<Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>>) => Promise<{ error: Error | null }>
   clearProfile: () => void
 }
@@ -23,19 +60,10 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
   profile: null,
   loading: false,
   
-  fetchProfile: async (userId: string) => {
+  fetchProfile: async (user) => {
     set({ loading: true })
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single()
-    
-    if (data && !error) {
-      set({ profile: data, loading: false })
-    } else {
-      set({ profile: null, loading: false })
-    }
+    const profile = await getOrCreateProfile(user)
+    set({ profile, loading: false })
   },
   
   updateProfile: async (updates) => {

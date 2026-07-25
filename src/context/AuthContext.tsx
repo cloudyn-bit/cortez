@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { User } from '@supabase/supabase-js'
-import { useProfileStore } from '@/hooks/useProfile'
+import { useProfileStore, getOrCreateProfile } from '@/hooks/useProfile'
 
 // We map Supabase User to a generic interface to avoid breaking other components if they expect `user_metadata`
 export interface AppUser {
@@ -17,10 +17,11 @@ interface AuthContextType {
   loading: boolean
   isDemoUser: boolean
   signInWithEmail: (email: string, password?: string) => Promise<{ error: Error | null }>
-  signUpWithEmail: (email: string, password?: string, username?: string) => Promise<{ error: Error | null }>
+  signUpWithEmail: (email: string, password?: string, username?: string) => Promise<{ data: any; error: Error | null }>
   signInAsGuest: () => void
   signOut: () => Promise<void>
   resetPasswordForEmail: (email: string) => Promise<{ error: Error | null }>
+  resendVerificationEmail: (email: string) => Promise<{ error: Error | null }>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -73,7 +74,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     
     // Fetch profile data
-    useProfileStore.getState().fetchProfile(appUser.id)
+    useProfileStore.getState().fetchProfile(appUser)
 
     // Check if user changed to reload stores
     const currentId = localStorage.getItem('lifeos_current_user_id')
@@ -140,17 +141,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
     
     // Automatically insert into profiles if signup was successful
-    if (!error && data.user && username) {
-      const { error: profileError } = await supabase.from('profiles').insert({
+    if (!error && data.user) {
+      await getOrCreateProfile({
         id: data.user.id,
-        username: username,
-        display_name: username
+        email: data.user.email,
+        user_metadata: { ...data.user.user_metadata, username }
       })
-      if (profileError) {
-        console.error('Failed to create user profile:', profileError)
-      }
     }
     
+    setLoading(false)
+    return { data, error }
+  }
+
+  const resendVerificationEmail = async (email: string) => {
+    setLoading(true)
+    const { error } = await supabase.auth.resend({
+      type: 'signup',
+      email,
+    })
     setLoading(false)
     return { error }
   }
@@ -186,7 +194,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signUpWithEmail,
         signInAsGuest,
         signOut,
-        resetPasswordForEmail
+        resetPasswordForEmail,
+        resendVerificationEmail
       }}
     >
       {children}
