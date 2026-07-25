@@ -68,8 +68,20 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
   },
   
   updateProfile: async (updates) => {
-    const { profile } = get()
-    if (!profile) return { error: new Error('No profile loaded') }
+    let { profile } = get()
+    
+    if (!profile) {
+      set({ loading: true })
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        profile = await getOrCreateProfile(user)
+        set({ profile })
+      }
+      if (!profile) {
+        set({ loading: false })
+        return { error: new Error('User not authenticated') }
+      }
+    }
     
     set({ loading: true })
     const { data, error } = await supabase
@@ -88,8 +100,21 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
   },
   
   uploadAvatar: async (file: File) => {
-    const { profile, updateProfile } = get()
-    if (!profile) return { error: new Error('No profile loaded'), url: null }
+    let { profile } = get()
+    const { updateProfile } = get()
+    
+    if (!profile) {
+      set({ loading: true })
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
+        profile = await getOrCreateProfile(user)
+        set({ profile })
+      }
+      if (!profile) {
+        set({ loading: false })
+        return { error: new Error('User not authenticated'), url: null }
+      }
+    }
     
     set({ loading: true })
     
