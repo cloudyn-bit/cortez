@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { Habit, HabitCategory } from '@/types/habit'
 import { useHabitStore } from '@/store/useHabitStore'
 import { calculateStreakStats, getMiniHeatmapData } from '@/lib/habits/streak'
-import { Button } from '@/components/ui/button'
+import { MagneticButton } from '@/components/ui/MagneticButton'
+import { AnimatedCard } from '@/components/ui/AnimatedCard'
 import { Badge } from '@/components/ui/badge'
 import {
   Flame,
@@ -47,13 +47,15 @@ export function HabitCard({ habit, onEdit }: HabitCardProps) {
   const habitColor = habit.color || '#6366f1'
 
   return (
-    <motion.div
+    <AnimatedCard
       layout
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.2 }}
-      className="group relative rounded-2xl border border-border/80 bg-card/40 p-5 shadow-sm hover:shadow-xl hover:border-indigo-500/40 transition-all duration-300 backdrop-blur-xl flex flex-col justify-between"
+      initial={{ opacity: 0, y: 12, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+      tilt={!menuOpen}
+      parallax={!menuOpen}
+      className="group relative bg-card/40 p-5 hover:border-indigo-500/40 flex flex-col justify-between"
     >
       <div>
         {/* Top Header: Category Pill & Menu */}
@@ -67,15 +69,14 @@ export function HabitCard({ habit, onEdit }: HabitCardProps) {
           </Badge>
 
           <div className="relative">
-            <Button
+            <MagneticButton
               variant="ghost"
-              size="icon"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="h-7 w-7 text-muted-foreground hover:text-foreground"
+              className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground"
               aria-label="Habit options"
             >
               <MoreVertical className="h-4 w-4" />
-            </Button>
+            </MagneticButton>
 
             {menuOpen && (
               <div className="absolute right-0 mt-1 w-32 rounded-lg border border-border bg-card p-1 shadow-xl z-30 animate-in fade-in duration-150">
@@ -196,30 +197,27 @@ export function HabitCard({ habit, onEdit }: HabitCardProps) {
 
       {/* Bottom Row: Today Completion Button */}
       <div className="pt-4 border-t border-border/50 mt-4">
-        <motion.div whileTap={{ scale: 0.97 }}>
-          <Button
-            onClick={() => toggleHabitCompletion(habit.id)}
-            variant={stats.completedToday ? 'default' : 'outline'}
-            className={`w-full py-5 text-xs font-bold gap-2 transition-all duration-300 ${
-              stats.completedToday
-                ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 border-emerald-500'
-                : 'border-white/10 hover:border-indigo-500/50 hover:bg-indigo-600/10 text-foreground'
-            }`}
-          >
-            {stats.completedToday ? (
-              <>
-                <Check className="h-4 w-4 stroke-[3]" />
-                <span>Completed Today!</span>
-              </>
-            ) : (
-              <>
-                <div className="h-4 w-4 rounded-full border-2 border-current flex items-center justify-center" />
-                <span>Mark as Done Today</span>
-              </>
-            )}
-          </Button>
-        </motion.div>
+        <MagneticButton
+          onClick={() => toggleHabitCompletion(habit.id)}
+          className={`w-full py-5 text-xs font-bold gap-2 rounded-xl transition-all duration-300 ${
+            stats.completedToday
+              ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-lg shadow-emerald-600/25 border border-emerald-500'
+              : 'bg-transparent border border-white/10 hover:border-indigo-500/50 hover:bg-indigo-600/10 text-foreground'
+          }`}
+        >
+          {stats.completedToday ? (
+            <>
+              <Check className="h-4 w-4 stroke-[3]" />
+              <span>Completed Today!</span>
+            </>
+          ) : (
+            <>
+              <div className="h-4 w-4 rounded-full border-2 border-current flex items-center justify-center" />
+              <span>Mark as Done Today</span>
+            </>
+          )}
+        </MagneticButton>
       </div>
-    </motion.div>
+    </AnimatedCard>
   )
 }

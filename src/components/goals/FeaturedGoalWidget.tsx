@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useGoalStore } from '@/store/useGoalStore'
-import { Button } from '@/components/ui/button'
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
+import { MagneticButton } from '@/components/ui/MagneticButton'
+import { AnimatedCard } from '@/components/ui/AnimatedCard'
+import { CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import {
   Target,
@@ -12,7 +13,7 @@ import {
   Plus,
   Trophy
 } from 'lucide-react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { GoalModal } from './GoalModal'
 
 export function FeaturedGoalWidget() {
@@ -28,37 +29,36 @@ export function FeaturedGoalWidget() {
 
   return (
     <>
-      <motion.div layoutId="layout-goals" transition={{ type: "spring", stiffness: 300, damping: 30 }} className="col-span-full">
-      <Card className="bg-card/40 border-border/80 shadow-md hover:border-indigo-500/30 transition-all overflow-hidden relative">
-        <CardHeader className="flex flex-row items-center justify-between pb-3">
-          <div className="space-y-1">
-            <CardTitle className="text-base font-bold flex items-center gap-2 text-foreground">
-              <Target className="h-4 w-4 text-indigo-400" />
-              Focus Target Goal
-            </CardTitle>
-            <p className="text-xs text-muted-foreground">
-              Track long-term academic & study milestones
-            </p>
-          </div>
+      <div className="col-span-full">
+        <AnimatedCard layoutId="layout-goals" className="bg-card/40 border-border/80 hover:border-indigo-500/30 overflow-hidden relative">
+          <CardHeader className="flex flex-row items-center justify-between pb-3">
+            <div className="space-y-1">
+              <CardTitle className="text-base font-bold flex items-center gap-2 text-foreground">
+                <Target className="h-4 w-4 text-indigo-400" />
+                Focus Target Goal
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">
+                Track long-term academic & study milestones
+              </p>
+            </div>
 
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsModalOpen(true)}
-              className="h-8 px-2.5 text-xs gap-1 border-border/60"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              <span>Add Goal</span>
-            </Button>
-            <Link to="/goals">
-              <Button variant="ghost" size="sm" className="h-8 px-2 text-xs text-indigo-400 hover:text-indigo-300 gap-1">
-                <span>All Goals</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            </Link>
-          </div>
-        </CardHeader>
+            <div className="flex items-center space-x-2">
+              <MagneticButton
+                variant="outline"
+                onClick={() => setIsModalOpen(true)}
+                className="h-8 px-2.5 text-xs gap-1 border-border/60 rounded-lg"
+              >
+                <Plus className="h-3.5 w-3.5" />
+                <span>Add Goal</span>
+              </MagneticButton>
+              <Link to="/goals">
+                <MagneticButton variant="ghost" className="h-8 px-2 text-xs text-indigo-400 hover:text-indigo-300 gap-1 rounded-lg">
+                  <span>All Goals</span>
+                  <ArrowRight className="h-3.5 w-3.5" />
+                </MagneticButton>
+              </Link>
+            </div>
+          </CardHeader>
 
         <CardContent className="space-y-4">
           {!featuredGoal ? (
@@ -114,38 +114,46 @@ export function FeaturedGoalWidget() {
                     Milestone Checklist
                   </span>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                    {featuredGoal.milestones.slice(0, 4).map((milestone) => (
-                      <div
-                        key={milestone.id}
-                        className="flex items-center space-x-2 p-2 rounded-lg bg-background/50 border border-border/30 text-xs"
-                      >
-                        <button
-                          onClick={() => toggleMilestone(featuredGoal.id, milestone.id)}
-                          className="text-muted-foreground hover:text-indigo-400 focus:outline-none shrink-0"
+                    <AnimatePresence mode="popLayout">
+                      {featuredGoal.milestones.slice(0, 4).map((milestone) => (
+                        <motion.div
+                          layout
+                          initial={{ opacity: 0, scale: 0.95 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.9 }}
+                          key={milestone.id}
+                          className="flex items-center space-x-2 p-2 rounded-lg bg-background/50 border border-white/5 shadow-inner text-xs transition-colors hover:bg-background/80"
                         >
-                          {milestone.completed ? (
-                            <CheckSquare className="h-4 w-4 text-emerald-400" />
-                          ) : (
-                            <Square className="h-4 w-4 text-muted-foreground" />
-                          )}
-                        </button>
-                        <span
-                          className={`truncate font-medium ${
-                            milestone.completed ? 'line-through text-muted-foreground' : 'text-foreground'
-                          }`}
-                        >
-                          {milestone.title}
-                        </span>
-                      </div>
-                    ))}
+                          <motion.button
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.9 }}
+                            onClick={() => toggleMilestone(featuredGoal.id, milestone.id)}
+                            className="text-muted-foreground hover:text-indigo-400 focus:outline-none shrink-0"
+                          >
+                            {milestone.completed ? (
+                              <CheckSquare className="h-4 w-4 text-emerald-400" />
+                            ) : (
+                              <Square className="h-4 w-4 text-muted-foreground" />
+                            )}
+                          </motion.button>
+                          <span
+                            className={`truncate font-medium transition-colors duration-300 ${
+                              milestone.completed ? 'line-through text-muted-foreground/50' : 'text-foreground'
+                            }`}
+                          >
+                            {milestone.title}
+                          </span>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
                   </div>
                 </div>
               )}
             </div>
           )}
         </CardContent>
-      </Card>
-      </motion.div>
+        </AnimatedCard>
+      </div>
 
       <GoalModal
         isOpen={isModalOpen}

@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { Note } from '@/types/note'
 import { useNoteStore } from '@/store/useNoteStore'
-import { Button } from '@/components/ui/button'
+import { MagneticButton } from '@/components/ui/MagneticButton'
+import { AnimatedCard } from '@/components/ui/AnimatedCard'
 import { Badge } from '@/components/ui/badge'
 import {
   Pin,
@@ -45,16 +45,18 @@ export function NoteCard({ note, onEdit }: NoteCardProps) {
   }
 
   return (
-    <motion.div
+    <AnimatedCard
       layout
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.2 }}
-      className={`group relative rounded-2xl border p-5 shadow-sm hover:shadow-xl transition-all duration-300 backdrop-blur-xl flex flex-col justify-between cursor-pointer ${
+      initial={{ opacity: 0, y: 12, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+      tilt={!menuOpen}
+      parallax={!menuOpen}
+      className={`group relative p-5 flex flex-col justify-between cursor-pointer ${
         note.pinned
           ? 'bg-card/70 border-indigo-500/40 shadow-indigo-500/10'
-          : 'bg-card/40 border-border/80 hover:border-indigo-500/40 hover:bg-card/75'
+          : 'bg-card/40 border-border/80 hover:border-indigo-500/40'
       }`}
       onClick={() => onEdit(note)}
     >
@@ -69,11 +71,10 @@ export function NoteCard({ note, onEdit }: NoteCardProps) {
           </div>
 
           <div className="flex items-center space-x-1 shrink-0" onClick={(e) => e.stopPropagation()}>
-            <Button
+            <MagneticButton
               variant="ghost"
-              size="icon"
               onClick={() => togglePin(note.id)}
-              className={`h-7 w-7 transition-colors ${
+              className={`h-7 w-7 rounded-full transition-colors ${
                 note.pinned
                   ? 'text-amber-400 hover:text-amber-300'
                   : 'text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100'
@@ -81,18 +82,17 @@ export function NoteCard({ note, onEdit }: NoteCardProps) {
               title={note.pinned ? 'Unpin note' : 'Pin note to top'}
             >
               <Pin className={`h-4 w-4 ${note.pinned ? 'fill-amber-400/20' : ''}`} />
-            </Button>
+            </MagneticButton>
 
             <div className="relative">
-              <Button
+              <MagneticButton
                 variant="ghost"
-                size="icon"
                 onClick={() => setMenuOpen(!menuOpen)}
-                className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground"
                 aria-label="Note options"
               >
                 <MoreVertical className="h-4 w-4" />
-              </Button>
+              </MagneticButton>
 
               {menuOpen && (
                 <div className="absolute right-0 mt-1 w-36 rounded-lg border border-border bg-card p-1 shadow-xl z-30 animate-in fade-in duration-150">
@@ -160,6 +160,6 @@ export function NoteCard({ note, onEdit }: NoteCardProps) {
           {getRelativeTime(note.updatedAt)}
         </span>
       </div>
-    </motion.div>
+    </AnimatedCard>
   )
 }

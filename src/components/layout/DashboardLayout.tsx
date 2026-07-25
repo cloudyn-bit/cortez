@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useOutlet, useLocation } from 'react-router-dom'
-import { AnimatePresence, motion } from 'framer-motion'
+import { AnimatePresence, motion, LayoutGroup } from 'framer-motion'
 import { Navbar } from './Navbar'
 import { Sidebar } from './Sidebar'
 import { CortezReminderBanner } from '@/components/assistant/CortezReminderBanner'
@@ -76,9 +76,11 @@ export function DashboardLayout() {
           />
         </div>
         <main className="flex-1 overflow-y-auto relative">
-          <AnimatePresence mode="popLayout">
-            {outlet && React.cloneElement(outlet, { key: location.pathname })}
-          </AnimatePresence>
+          <LayoutGroup>
+            <AnimatePresence mode="popLayout">
+              {outlet && React.cloneElement(outlet, { key: location.pathname })}
+            </AnimatePresence>
+          </LayoutGroup>
         </main>
       </div>
 

@@ -1,5 +1,6 @@
+import React, { useRef, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, useMotionValue, useTransform } from 'framer-motion'
 import { cn } from '@/lib/utils'
 import { useTaskStore } from '@/store/useTaskStore'
 import { useHabitStore } from '@/store/useHabitStore'
@@ -59,55 +60,15 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = location.pathname === item.path
+          
           return (
-            <Link
-              key={item.path}
-              to={item.path}
-              onClick={onClose}
-              className={cn(
-                "relative flex items-center justify-between rounded-[var(--radius)] px-3 py-[calc(0.5rem*var(--density))] text-[13px] font-medium transition-colors duration-[calc(200ms*var(--anim-speed))] group",
-                isActive
-                  ? "text-primary"
-                  : "text-muted-foreground hover:bg-white/5 hover:text-foreground"
-              )}
-            >
-              {isActive && (
-                <motion.div
-                  layoutId="sidebar-active-bg"
-                  className="absolute inset-0 rounded-[var(--radius)] bg-primary/10 shadow-inner shadow-primary/20 pointer-events-none"
-                  initial={false}
-                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                />
-              )}
-              <div className="relative z-10 flex items-center space-x-3">
-                {/* Active indicator — subtle left glow */}
-                <div className="relative">
-                  {isActive && (
-                    <motion.div 
-                      layoutId="sidebar-left-bar"
-                      className="absolute -left-[18px] top-1/2 -translate-y-1/2 h-4 w-[3px] rounded-full bg-primary shadow-[0_0_10px_hsl(var(--primary)/0.6)]" 
-                      transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                    />
-                  )}
-                  <motion.div animate={{ scale: isActive ? 1.1 : 1 }} transition={{ type: "spring", stiffness: 400, damping: 25 }}>
-                    <Icon className={cn("h-4 w-4 transition-colors duration-[calc(200ms*var(--anim-speed))]", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
-                  </motion.div>
-                </div>
-                <motion.span animate={{ fontWeight: isActive ? 700 : 500 }}>
-                  {item.label}
-                </motion.span>
-              </div>
-              {item.badge !== null && item.badge !== undefined && (
-                <span className={cn(
-                  "relative z-10 rounded-full px-1.5 py-0.5 text-[10px] font-bold",
-                  item.badge === 'Live'
-                    ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
-                    : "bg-white/[0.04] text-zinc-500"
-                )}>
-                  {item.badge}
-                </span>
-              )}
-            </Link>
+            <MagneticNavItem 
+              key={item.path} 
+              item={item} 
+              isActive={isActive} 
+              onClose={onClose} 
+              Icon={Icon}
+            />
           )
         })}
       </nav>
@@ -163,5 +124,100 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
       )}
     </>
+  )
+}
+
+// Custom Magnetic Nav Item
+function MagneticNavItem({ item, isActive, onClose, Icon }: any) {
+  const ref = useRef<HTMLAnchorElement>(null)
+  const [isHovered, setIsHovered] = useState(false)
+  const mouseX = useMotionValue(0)
+  const mouseY = useMotionValue(0)
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!ref.current) return
+    const rect = ref.current.getBoundingClientRect()
+    mouseX.set(e.clientX - rect.left)
+    mouseY.set(e.clientY - rect.top)
+  }
+
+  return (
+    <Link
+      ref={ref}
+      to={item.path}
+      onClick={onClose}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={cn(
+        "relative flex items-center justify-between overflow-hidden rounded-[var(--radius)] px-3 py-[calc(0.5rem*var(--density))] text-[13px] font-medium transition-colors duration-[calc(200ms*var(--anim-speed))] group",
+        isActive
+          ? "text-primary"
+          : "text-muted-foreground hover:text-foreground"
+      )}
+    >
+      {/* Magnetic Hover Glow */}
+      <motion.div
+        className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        style={{
+          background: useTransform(
+            [mouseX, mouseY],
+            ([x, y]) => `radial-gradient(40px circle at ${x}px ${y}px, rgba(255,255,255,0.06), transparent 100%)`
+          ) as any,
+        }}
+      />
+
+      {isActive && (
+        <motion.div
+          layoutId="sidebar-active-bg"
+          className="absolute inset-0 rounded-[var(--radius)] bg-primary/10 shadow-inner shadow-primary/20 pointer-events-none"
+          initial={false}
+          transition={{ type: "spring", stiffness: 350, damping: 30 }}
+        />
+      )}
+      <div className="relative z-10 flex items-center space-x-3">
+        {/* Active indicator — subtle left glow */}
+        <div className="relative">
+          {isActive && (
+            <motion.div 
+              layoutId="sidebar-left-bar"
+              className="absolute -left-[18px] top-1/2 -translate-y-1/2 h-4 w-[3px] rounded-full bg-primary shadow-[0_0_10px_hsl(var(--primary)/0.6)]" 
+              transition={{ type: "spring", stiffness: 350, damping: 30 }}
+            />
+          )}
+          <motion.div 
+            animate={{ 
+              scale: isActive ? 1.1 : (isHovered ? 1.05 : 1),
+              x: isHovered && !isActive ? 2 : 0
+            }} 
+            transition={{ type: "spring", stiffness: 400, damping: 25 }}
+          >
+            <Icon className={cn("h-4 w-4 transition-colors duration-[calc(200ms*var(--anim-speed))]", isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
+          </motion.div>
+        </div>
+        <motion.span 
+          animate={{ 
+            fontWeight: isActive ? 700 : 500,
+            x: isHovered && !isActive ? 2 : 0
+          }}
+          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+        >
+          {item.label}
+        </motion.span>
+      </div>
+      {item.badge !== null && item.badge !== undefined && (
+        <motion.span 
+          whileHover={{ scale: 1.1 }}
+          className={cn(
+            "relative z-10 rounded-full px-1.5 py-0.5 text-[10px] font-bold",
+            item.badge === 'Live'
+              ? "bg-emerald-500/15 text-emerald-400 border border-emerald-500/20"
+              : "bg-white/[0.04] text-zinc-500"
+          )}
+        >
+          {item.badge}
+        </motion.span>
+      )}
+    </Link>
   )
 }

@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { Task, TaskPriority, TaskCategory } from '@/types/task'
 import { useTaskStore } from '@/store/useTaskStore'
-import { Button } from '@/components/ui/button'
+import { MagneticButton } from '@/components/ui/MagneticButton'
+import { AnimatedCard } from '@/components/ui/AnimatedCard'
 import { Badge } from '@/components/ui/badge'
 import {
   CheckSquare,
@@ -67,16 +67,18 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
   const priorityInfo = priorityStyles[task.priority]
 
   return (
-    <motion.div
+    <AnimatedCard
       layout
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.2 }}
-      className={`group relative rounded-xl border p-4 transition-all duration-200 shadow-sm hover:shadow-md ${
+      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+      tilt={!menuOpen}
+      parallax={!menuOpen}
+      className={`group relative p-4 ${
         task.completed
-          ? 'bg-card/20 border-border/40 opacity-75'
-          : 'bg-card/50 border-border/80 hover:border-indigo-500/40 hover:bg-card/75'
+          ? 'bg-card/10 border-border/20 opacity-75 grayscale-[0.2]'
+          : 'bg-card/40 border-border/80 hover:border-indigo-500/40'
       }`}
     >
       <div className="flex items-start justify-between gap-3">
@@ -145,15 +147,14 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
 
         {/* Action Menu */}
         <div className="relative shrink-0">
-          <Button
+          <MagneticButton
             variant="ghost"
-            size="icon"
             onClick={() => setMenuOpen(!menuOpen)}
-            className="h-8 w-8 text-muted-foreground hover:text-foreground"
+            className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground"
             aria-label="Task actions"
           >
             <MoreVertical className="h-4 w-4" />
-          </Button>
+          </MagneticButton>
 
           {menuOpen && (
             <div className="absolute right-0 mt-1 w-36 rounded-lg border border-border bg-card p-1 shadow-xl z-30 animate-in fade-in duration-150">
@@ -182,6 +183,6 @@ export function TaskCard({ task, onEdit }: TaskCardProps) {
           )}
         </div>
       </div>
-    </motion.div>
+    </AnimatedCard>
   )
 }

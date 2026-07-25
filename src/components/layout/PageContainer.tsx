@@ -13,32 +13,35 @@ interface PageContainerProps {
 }
 
 const containerVariants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 0, scale: 0.98 },
   visible: {
     opacity: 1,
+    scale: 1,
     transition: {
-      staggerChildren: 0.06,
+      staggerChildren: 0.05,
       delayChildren: 0.02,
+      type: "spring", stiffness: 300, damping: 30
     },
   },
   exit: {
     opacity: 0,
-    y: -12,
-    filter: 'blur(4px)',
-    transition: { duration: 0.2 },
+    scale: 0.98,
+    y: 20,
+    transition: { duration: 0.15, ease: "easeOut" },
   },
 }
 
 const childVariants = {
-  hidden: { opacity: 0, y: 16, filter: 'blur(4px)' },
+  hidden: { opacity: 0, y: 20, scale: 0.95 },
   visible: {
     opacity: 1,
     y: 0,
-    filter: 'blur(0px)',
+    scale: 1,
     transition: {
       type: 'spring',
-      stiffness: 300,
+      stiffness: 400,
       damping: 30,
+      mass: 0.8
     },
   },
 }
@@ -52,8 +55,9 @@ export function PageContainer({
   layoutId
 }: PageContainerProps) {
   return (
-    <motion.div
-      layoutId={layoutId}
+    <motion.main
+      layout
+      layoutId={layoutId || "page-container"}
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -62,6 +66,7 @@ export function PageContainer({
     >
       {(title || description || action) && (
         <motion.div
+          layout="position"
           variants={childVariants}
           className="flex flex-col md:flex-row md:items-end justify-between gap-4 pb-6 mb-6 border-b border-white/[0.04]"
         >
@@ -82,15 +87,15 @@ export function PageContainer({
       )}
 
       <div className="space-y-6">
-        {React.Children.map(children, (child) => {
+        {React.Children.map(children, (child, index) => {
           if (!React.isValidElement(child)) return child
           return (
-            <motion.div variants={childVariants}>
+            <motion.div layout="position" variants={childVariants} key={`child-${index}`}>
               {child}
             </motion.div>
           )
         })}
       </div>
-    </motion.div>
+    </motion.main>
   )
 }

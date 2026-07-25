@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Goal, GoalCategory } from '@/types/goal'
 import { useGoalStore } from '@/store/useGoalStore'
-import { Button } from '@/components/ui/button'
+import { MagneticButton } from '@/components/ui/MagneticButton'
+import { AnimatedCard } from '@/components/ui/AnimatedCard'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -76,16 +77,18 @@ export function GoalCard({ goal, onEdit }: GoalCardProps) {
   }
 
   return (
-    <motion.div
+    <AnimatedCard
       layout
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.25 }}
-      className={`group relative rounded-2xl border p-5 shadow-sm transition-all duration-300 backdrop-blur-xl flex flex-col justify-between ${
+      initial={{ opacity: 0, y: 12, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.9 }}
+      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+      tilt={!menuOpen}
+      parallax={!menuOpen}
+      className={`group relative p-5 flex flex-col justify-between ${
         isCompleted
           ? 'bg-emerald-500/10 border-emerald-500/40 shadow-emerald-500/10'
-          : 'bg-card/40 border-border/80 hover:border-indigo-500/40 hover:bg-card/75'
+          : 'bg-card/40 border-border/80 hover:border-indigo-500/40'
       }`}
     >
       <div className="space-y-4">
@@ -109,15 +112,14 @@ export function GoalCard({ goal, onEdit }: GoalCardProps) {
           </div>
 
           <div className="relative">
-            <Button
+            <MagneticButton
               variant="ghost"
-              size="icon"
               onClick={() => setMenuOpen(!menuOpen)}
-              className="h-7 w-7 text-muted-foreground hover:text-foreground"
+              className="h-7 w-7 rounded-full text-muted-foreground hover:text-foreground"
               aria-label="Goal options"
             >
               <MoreVertical className="h-4 w-4" />
-            </Button>
+            </MagneticButton>
 
             {menuOpen && (
               <div className="absolute right-0 mt-1 w-32 rounded-lg border border-border bg-card p-1 shadow-xl z-30 animate-in fade-in duration-150">
@@ -230,9 +232,9 @@ export function GoalCard({ goal, onEdit }: GoalCardProps) {
                 className="h-8 text-xs bg-background/50 border-input"
                 autoFocus
               />
-              <Button type="submit" size="sm" variant="glow" className="h-8 text-xs px-3">
+              <MagneticButton type="submit" variant="primary" className="h-8 text-xs px-3 rounded-lg">
                 Save
-              </Button>
+              </MagneticButton>
             </form>
           )}
 
@@ -313,6 +315,6 @@ export function GoalCard({ goal, onEdit }: GoalCardProps) {
           </div>
         </div>
       </div>
-    </motion.div>
+    </AnimatedCard>
   )
 }
