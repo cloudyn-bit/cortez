@@ -53,6 +53,7 @@ interface ProfileState {
   loading: boolean
   fetchProfile: (user: { id: string; email?: string; user_metadata?: any }) => Promise<void>
   updateProfile: (updates: Partial<Omit<UserProfile, 'id' | 'created_at' | 'updated_at'>>) => Promise<{ error: Error | null }>
+  uploadAvatar: (file: File) => Promise<{ error: Error | null, url: string | null }>
   clearProfile: () => void
 }
 
@@ -84,6 +85,43 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
     }
     set({ loading: false })
     return { error }
+  },
+  
+  uploadAvatar: async (file: File) => {
+    const { profile, updateProfile } = get()
+    if (!profile) return { error: new Error('No profile loaded'), url: null }
+    
+    set({ loading: true })
+    
+    // Determine extension, default to jpg
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+    const filePath = `${profile.id}/avatar.${ext}`
+    
+    const { error: uploadError } = await supabase.storage
+      .from('avatars')
+      .upload(filePath, file, { upsert: true })
+      
+    if (uploadError) {
+      set({ loading: false })
+      return { error: uploadError, url: null }
+    }
+    
+    const { data: publicUrlData } = supabase.storage
+      .from('avatars')
+      .getPublicUrl(filePath)
+      
+    // Append timestamp to bust browser cache
+    const newAvatarUrl = `${publicUrlData.publicUrl}?t=${Date.now()}`
+    
+    const { error: updateError } = await updateProfile({ avatar_url: newAvatarUrl })
+    
+    if (updateError) {
+      set({ loading: false })
+      return { error: updateError, url: null }
+    }
+    
+    set({ loading: false })
+    return { error: null, url: newAvatarUrl }
   },
   
   clearProfile: () => set({ profile: null, loading: false })

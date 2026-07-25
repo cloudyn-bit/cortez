@@ -5,9 +5,12 @@ import { useTheme } from '@/context/ThemeProvider'
 import { useProfileStore } from '@/hooks/useProfile'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
+import { CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { User, Sun, Moon, Laptop, LogOut, ShieldAlert, Edit2, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { MagicCard } from '@/components/ui/MagicCard'
+import { BlurFade } from '@/components/ui/BlurFade'
+import { AvatarUpload } from '@/components/profile/AvatarUpload'
 
 export function SettingsPage() {
   const { user, signOut, isDemoUser } = useAuth()
@@ -80,7 +83,8 @@ export function SettingsPage() {
     >
       <div className="space-y-6 max-w-3xl">
         {/* Public Profile Card */}
-        <Card className="bg-card/40 border-border/80">
+        <BlurFade delay={0.1} inView>
+        <MagicCard className="bg-card/40 border-border/80 rounded-xl">
           <CardHeader className="space-y-1 flex flex-row items-center justify-between">
             <div>
               <CardTitle className="text-lg flex items-center gap-2">
@@ -112,6 +116,10 @@ export function SettingsPage() {
                   transition={{ duration: 0.2 }}
                   className="space-y-4"
                 >
+                  <div className="pb-4 mb-4 border-b border-border/40">
+                    <AvatarUpload />
+                  </div>
+
                   <div className="space-y-2">
                     <label className="text-xs font-medium text-muted-foreground">Username</label>
                     <Input 
@@ -200,11 +208,13 @@ export function SettingsPage() {
               )}
             </AnimatePresence>
             )}
-          </CardContent>
-        </Card>
+            </CardContent>
+          </MagicCard>
+        </BlurFade>
 
         {/* Account Info Card */}
-        <Card className="bg-card/40 border-border/80">
+        <BlurFade delay={0.15} inView>
+        <MagicCard className="bg-card/40 border-border/80 rounded-xl">
           <CardHeader className="space-y-1">
             <CardTitle className="text-lg flex items-center gap-2">
               <LogOut className="h-5 w-5 text-zinc-400" />
@@ -223,11 +233,13 @@ export function SettingsPage() {
                 {isDemoUser ? 'Demo Guest Account' : 'Supabase Authenticated'}
               </span>
             </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </MagicCard>
+        </BlurFade>
 
         {/* Theme Preferences */}
-        <Card className="bg-card/40 border-border/80">
+        <BlurFade delay={0.2} inView>
+        <MagicCard className="bg-card/40 border-border/80 rounded-xl">
           <CardHeader className="space-y-1">
             <CardTitle className="text-lg">Appearance Theme</CardTitle>
             <CardDescription>Customize the application visual theme</CardDescription>
@@ -268,11 +280,13 @@ export function SettingsPage() {
               <Laptop className="h-5 w-5" />
               <span>System</span>
             </button>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </MagicCard>
+        </BlurFade>
 
         {/* Danger Zone */}
-        <Card className="bg-destructive/5 border-destructive/20">
+        <BlurFade delay={0.25} inView>
+        <MagicCard className="bg-destructive/5 border-destructive/20 rounded-xl">
           <CardHeader className="space-y-1">
             <CardTitle className="text-lg text-destructive flex items-center gap-2">
               <ShieldAlert className="h-5 w-5" />
@@ -289,8 +303,9 @@ export function SettingsPage() {
               <LogOut className="h-4 w-4" />
               <span>Sign Out</span>
             </Button>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </MagicCard>
+        </BlurFade>
       </div>
     </PageContainer>
   )
