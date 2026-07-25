@@ -3,7 +3,9 @@ import { Link, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/context/AuthContext'
 import { useTheme } from '@/context/ThemeProvider'
+import { useProfileStore } from '@/hooks/useProfile'
 import { NavbarMiniTimer } from '@/components/pomodoro/NavbarMiniTimer'
+import { UserAvatar } from '@/components/profile/UserAvatar'
 import { ArcReactorLogo } from '@/components/ui/ArcReactorLogo'
 import { Button } from '@/components/ui/button'
 import {
@@ -27,6 +29,7 @@ interface NavbarProps {
 export function Navbar({ onToggleSidebar, isSidebarOpen, onOpenCommandPalette }: NavbarProps) {
   const { user, signOut, isDemoUser } = useAuth()
   const { theme, setTheme } = useTheme()
+  const { profile } = useProfileStore()
   const location = useLocation()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
 
@@ -111,13 +114,19 @@ export function Navbar({ onToggleSidebar, isSidebarOpen, onOpenCommandPalette }:
             <div className="relative">
               <button
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center space-x-2 rounded-full border border-white/[0.06] bg-white/[0.02] p-1 pl-2 pr-3 hover:bg-white/[0.04] transition-all duration-200 text-xs font-medium focus:outline-none"
+                className="flex items-center space-x-2 rounded-full border border-white/[0.06] bg-white/[0.02] p-1 pr-3 hover:bg-white/[0.04] transition-all duration-200 text-xs font-medium focus:outline-none"
               >
-                <div className="h-6 w-6 rounded-full bg-indigo-600/20 text-indigo-400 flex items-center justify-center font-semibold text-xs border border-indigo-500/20">
-                  {user.email?.[0]?.toUpperCase() || 'U'}
-                </div>
-                <span className="max-w-[80px] truncate text-zinc-500 hidden sm:inline">
-                  {isDemoUser ? 'Guest' : user.email?.split('@')[0]}
+                <UserAvatar
+                  avatarUrl={profile?.avatar_url}
+                  username={profile?.username}
+                  displayName={profile?.display_name}
+                  email={user.email}
+                  size="sm"
+                />
+                <span className="max-w-[120px] truncate text-zinc-500 hidden sm:inline">
+                  {isDemoUser 
+                    ? 'Guest' 
+                    : (profile?.display_name || profile?.username || user.email?.split('@')[0])}
                 </span>
               </button>
 
@@ -132,7 +141,9 @@ export function Navbar({ onToggleSidebar, isSidebarOpen, onOpenCommandPalette }:
                   >
                     <div className="px-3 py-2.5 border-b border-white/[0.04] text-xs mb-1">
                       <p className="font-semibold text-white truncate">
-                        {user.user_metadata?.full_name || 'LifeOS User'}
+                        {isDemoUser 
+                          ? 'Guest User' 
+                          : (profile?.display_name || profile?.username || user.email?.split('@')[0] || 'LifeOS User')}
                       </p>
                       <p className="text-zinc-600 truncate text-[11px]">{user.email}</p>
                       {isDemoUser && (

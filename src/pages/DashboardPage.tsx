@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { useProfileStore } from '@/hooks/useProfile'
+import { useAuth } from '@/context/AuthContext'
 import { ShinyButton } from '@/components/ui/ShinyButton'
 import { BlurFade } from '@/components/ui/BlurFade'
 import { CortezAssistantCard } from '@/components/assistant/CortezAssistantCard'
@@ -23,6 +24,7 @@ export function DashboardPage() {
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false)
 
   const { profile } = useProfileStore()
+  const { user } = useAuth()
 
   const greeting = useMemo(() => {
     const hour = new Date().getHours()
@@ -30,9 +32,14 @@ export function DashboardPage() {
     if (hour >= 5 && hour < 12) timeOfDay = 'Morning'
     else if (hour >= 12 && hour < 17) timeOfDay = 'Afternoon'
     
-    const name = profile?.display_name || profile?.username || 'Guest'
+    let name = 'Guest'
+    if (profile?.display_name) name = profile.display_name
+    else if (profile?.username) name = profile.username
+    else if (user?.user_metadata?.full_name) name = user.user_metadata.full_name
+    else if (user?.email) name = user.email.split('@')[0]
+
     return `Good ${timeOfDay}, ${name}.`
-  }, [profile])
+  }, [profile, user])
 
   return (
     <PageContainer
