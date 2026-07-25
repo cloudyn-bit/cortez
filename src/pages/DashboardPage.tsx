@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { PageContainer } from '@/components/layout/PageContainer'
+import { useProfileStore } from '@/hooks/useProfile'
 import { ShinyButton } from '@/components/ui/ShinyButton'
 import { BlurFade } from '@/components/ui/BlurFade'
 import { CortezAssistantCard } from '@/components/assistant/CortezAssistantCard'
@@ -21,10 +22,22 @@ export function DashboardPage() {
   const [isGoalModalOpen, setIsGoalModalOpen] = useState(false)
   const [isNoteModalOpen, setIsNoteModalOpen] = useState(false)
 
+  const { profile } = useProfileStore()
+
+  const greeting = useMemo(() => {
+    const hour = new Date().getHours()
+    let timeOfDay = 'Evening'
+    if (hour >= 5 && hour < 12) timeOfDay = 'Morning'
+    else if (hour >= 12 && hour < 17) timeOfDay = 'Afternoon'
+    
+    const name = profile?.display_name || profile?.username || 'Guest'
+    return `Good ${timeOfDay}, ${name}.`
+  }, [profile])
+
   return (
     <PageContainer
-      title="Dashboard"
-      description="Your productivity overview."
+      title={greeting}
+      description="Welcome back. Here is your productivity overview."
       action={
         <ShinyButton
           onClick={() => setIsTaskModalOpen(true)}

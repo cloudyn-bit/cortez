@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '@/context/AuthContext'
+import { supabase } from '@/lib/supabase'
 import { Input } from '@/components/ui/input'
 import { MagicCard } from '@/components/ui/MagicCard'
 import { ShinyButton } from '@/components/ui/ShinyButton'
 import { AuroraBackground } from '@/components/ui/AuroraBackground'
-import { Mail, Lock, ArrowRight, Loader2, CheckCircle, AlertCircle, ShieldCheck } from 'lucide-react'
+import { Mail, Lock, User as UserIcon, ArrowRight, Loader2, CheckCircle, AlertCircle, ShieldCheck, Check } from 'lucide-react'
 
 // Spring configuration for smooth layout morphing
 const morphSpring = {
@@ -38,9 +39,14 @@ export function LoginPage() {
   const [mode, setMode] = useState<'signin' | 'signup' | 'forgot'>('signin')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('')
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null)
   
+  // Username validation state
+  const [usernameStatus, setUsernameStatus] = useState<'idle' | 'loading' | 'valid' | 'invalid'>('idle')
+  const [usernameError, setUsernameError] = useState('')
+
   // Transitioning state to trigger layout morph to dashboard before navigating
   const [isTransitioningOut, setIsTransitioningOut] = useState(false)
 
@@ -53,6 +59,43 @@ export function LoginPage() {
     }
   }, [user])
 
+  // Username live validation
+  useEffect(() => {
+    if (mode !== 'signup') return
+    
+    if (!username) {
+      setUsernameStatus('idle')
+      setUsernameError('')
+      return
+    }
+
+    const regex = /^[a-zA-Z0-9_]{3,20}$/
+    if (!regex.test(username)) {
+      setUsernameStatus('invalid')
+      setUsernameError('3-20 chars: letters, numbers, underscores')
+      return
+    }
+
+    setUsernameStatus('loading')
+    const timer = setTimeout(async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('username', username)
+        .single()
+      
+      if (data) {
+        setUsernameStatus('invalid')
+        setUsernameError('Username is already taken')
+      } else {
+        setUsernameStatus('valid')
+        setUsernameError('Username is available')
+      }
+    }, 500)
+
+    return () => clearTimeout(timer)
+  }, [username, mode])
+
   const navigateWithMorph = () => {
     setIsTransitioningOut(true)
     setTimeout(() => {
@@ -62,10 +105,17 @@ export function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!email || (mode !== 'forgot' && !password)) {
+    
+    if (mode === 'signup' && usernameStatus !== 'valid') {
+      setMessage({ type: 'error', text: 'Please choose a valid unique username.' })
+      return
+    }
+
+    if (!email || (mode !== 'forgot' && !password) || (mode === 'signup' && !username)) {
       setMessage({ type: 'error', text: 'Please fill in all required fields.' })
       return
     }
+    
     setLoading(true)
     setMessage(null)
 
@@ -79,10 +129,11 @@ export function LoginPage() {
         return // avoid setLoading(false) to keep button in loading state during transition
       }
     } else if (mode === 'signup') {
-      const res = await signUpWithEmail(email, password)
+      const res = await signUpWithEmail(email, password, username)
       error = res.error
       if (!error) {
-        setMessage({ type: 'success', text: 'Registration successful! Please check your email to verify your account.' })
+        setMessage({ type: 'success', text: 'Registration successful! Welcome aboard.' })
+        // If email confirmation is disabled, user will be logged in and the useEffect will redirect them
       }
     } else if (mode === 'forgot') {
       const res = await resetPasswordForEmail(email)
@@ -225,6 +276,51 @@ export function LoginPage() {
 
               {/* Form */}
               <form onSubmit={handleSubmit} className="space-y-5">
+                <AnimatePresence mode="popLayout">
+                  {mode === 'signup' && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="space-y-2 overflow-hidden"
+                    >
+                      <label className="text-xs font-bold text-zinc-400 uppercase tracking-widest ml-1">Username</label>
+                      <div className="relative group">
+                        <UserIcon className="absolute left-4 top-3.5 h-5 w-5 text-zinc-500 group-focus-within:text-cyan-400 transition-colors duration-300" />
+                        <Input
+                          type="text"
+                          placeholder="johndoe"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value.toLowerCase())}
+                          className={`pl-12 pr-10 h-12 bg-black/20 border-white/10 focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/50 rounded-xl text-sm text-white placeholder:text-zinc-600 transition-all duration-300 shadow-inner ${
+                            usernameStatus === 'invalid' ? 'border-rose-500/50 focus:border-rose-500/50 focus:ring-rose-500/50' : 
+                            usernameStatus === 'valid' ? 'border-emerald-500/50 focus:border-emerald-500/50 focus:ring-emerald-500/50' : ''
+                          }`}
+                          required={mode === 'signup'}
+                        />
+                        <div className="absolute right-4 top-3.5 h-5 w-5 flex items-center justify-center">
+                          {usernameStatus === 'loading' && <Loader2 className="h-4 w-4 animate-spin text-zinc-400" />}
+                          {usernameStatus === 'valid' && <Check className="h-4 w-4 text-emerald-400" />}
+                          {usernameStatus === 'invalid' && <AlertCircle className="h-4 w-4 text-rose-400" />}
+                        </div>
+                      </div>
+                      <AnimatePresence>
+                        {usernameError && (
+                          <motion.p 
+                            initial={{ opacity: 0, y: -5 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -5 }}
+                            className={`text-xs ml-1 font-medium ${usernameStatus === 'valid' ? 'text-emerald-400' : 'text-rose-400'}`}
+                          >
+                            {usernameError}
+                          </motion.p>
+                        )}
+                      </AnimatePresence>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
                 <motion.div
                   custom={0}
                   variants={staggerItem}
@@ -283,7 +379,7 @@ export function LoginPage() {
                 <motion.div custom={2} variants={staggerItem} initial="hidden" animate="visible" className="pt-2 flex flex-col gap-3">
                   <ShinyButton
                     type="submit"
-                    disabled={loading}
+                    disabled={loading || (mode === 'signup' && usernameStatus !== 'valid')}
                     className="w-full h-12"
                   >
                     {loading ? (
@@ -334,3 +430,4 @@ export function LoginPage() {
     </motion.div>
   )
 }
+

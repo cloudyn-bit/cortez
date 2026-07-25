@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import { User } from '@supabase/supabase-js'
+import { useProfileStore } from '@/hooks/useProfile'
 
 // We map Supabase User to a generic interface to avoid breaking other components if they expect `user_metadata`
 export interface AppUser {
@@ -16,7 +17,7 @@ interface AuthContextType {
   loading: boolean
   isDemoUser: boolean
   signInWithEmail: (email: string, password?: string) => Promise<{ error: Error | null }>
-  signUpWithEmail: (email: string, password?: string) => Promise<{ error: Error | null }>
+  signUpWithEmail: (email: string, password?: string, username?: string) => Promise<{ error: Error | null }>
   signInAsGuest: () => void
   signOut: () => Promise<void>
   resetPasswordForEmail: (email: string) => Promise<{ error: Error | null }>
@@ -71,6 +72,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user_metadata: supabaseUser.user_metadata,
     }
     
+    // Fetch profile data
+    useProfileStore.getState().fetchProfile(appUser.id)
+
     // Check if user changed to reload stores
     const currentId = localStorage.getItem('lifeos_current_user_id')
     if (currentId && currentId !== 'guest-user-123' && currentId !== appUser.id) {
@@ -91,6 +95,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       user_metadata: { full_name: 'Guest User' }
     }
     
+    useProfileStore.getState().clearProfile()
+    
     const currentId = localStorage.getItem('lifeos_current_user_id')
     if (currentId !== 'guest-user-123') {
       localStorage.setItem('lifeos_current_user_id', guestUser.id)
@@ -105,6 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const handleUserLogout = () => {
+    useProfileStore.getState().clearProfile()
     const currentId = localStorage.getItem('lifeos_current_user_id')
     localStorage.removeItem('lifeos_current_user_id')
     setUser(null)
@@ -125,12 +132,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error }
   }
 
-  const signUpWithEmail = async (email: string, password?: string) => {
+  const signUpWithEmail = async (email: string, password?: string, username?: string) => {
     setLoading(true)
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password: password || '',
     })
+    
+    // Automatically insert into profiles if signup was successful
+    if (!error && data.user && username) {
+      const { error: profileError } = await supabase.from('profiles').insert({
+        id: data.user.id,
+        username: username,
+        display_name: username
+      })
+      if (profileError) {
+        console.error('Failed to create user profile:', profileError)
+      }
+    }
+    
     setLoading(false)
     return { error }
   }

@@ -6,6 +6,7 @@ import { useHabitStore } from '@/store/useHabitStore'
 import { useGoalStore } from '@/store/useGoalStore'
 import { useNoteStore } from '@/store/useNoteStore'
 import { usePomodoroStore } from '@/store/usePomodoroStore'
+import { useProfileStore } from '@/hooks/useProfile'
 import { ArcReactorLogo } from '@/components/ui/ArcReactorLogo'
 import {
   LayoutDashboard,
@@ -31,6 +32,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const { goals } = useGoalStore()
   useNoteStore()
   const { isRunning } = usePomodoroStore()
+  const { profile } = useProfileStore()
 
   const pendingTaskCount = tasks.filter((t) => !t.completed).length
   const activeGoalCount = goals.filter((g) => g.progress < 100).length
@@ -109,11 +111,35 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         })}
       </nav>
 
-      {/* Footer — just the logo, no chatbot status */}
-      <div className="px-6 pt-4 border-t border-white/[0.04]">
-        <div className="flex items-center space-x-2.5">
-          <ArcReactorLogo size={18} animate={true} glowIntensity="low" />
-          <span className="text-[11px] text-zinc-600 font-medium">LifeOS v1.0</span>
+      {/* Footer */}
+      <div className="px-4 py-4 border-t border-white/[0.04]">
+        <div className="flex items-center space-x-3">
+          {profile ? (
+            <>
+              <div className="h-9 w-9 rounded-full bg-primary/20 border border-white/10 shrink-0 flex items-center justify-center overflow-hidden">
+                {profile.avatar_url ? (
+                  <img src={profile.avatar_url} alt={profile.username} className="h-full w-full object-cover" />
+                ) : (
+                  <span className="text-primary text-xs font-semibold">
+                    {(profile.display_name || profile.username).substring(0, 2).toUpperCase()}
+                  </span>
+                )}
+              </div>
+              <div className="flex flex-col overflow-hidden">
+                <span className="text-sm text-foreground font-semibold truncate">
+                  {profile.display_name || profile.username}
+                </span>
+                <span className="text-[11px] text-muted-foreground truncate">
+                  @{profile.username}
+                </span>
+              </div>
+            </>
+          ) : (
+            <>
+              <ArcReactorLogo size={18} animate={true} glowIntensity="low" />
+              <span className="text-[11px] text-zinc-600 font-medium">LifeOS v1.0</span>
+            </>
+          )}
         </div>
       </div>
     </div>
