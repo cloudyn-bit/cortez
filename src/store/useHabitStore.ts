@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { getNamespacedStorage } from '@/lib/storage'
 import { Habit } from '@/types/habit'
 import { getTodayKey } from '@/lib/habits/streak'
 
@@ -64,6 +65,7 @@ export const useHabitStore = create<HabitState>()(
     }),
     {
       name: 'lifeos-habits-storage',
+      storage: getNamespacedStorage(),
     }
   )
 )

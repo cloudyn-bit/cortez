@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { getNamespacedStorage } from '@/lib/storage'
 
 export type ThemePreset = 'Aurora' | 'Midnight' | 'Ocean' | 'Carbon' | 'Glass' | 'Nebula' | 'Minimal'
 export type Intensity = 'low' | 'medium' | 'high'
@@ -104,6 +105,7 @@ export const usePersonalizationStore = create<PersonalizationState>()(
     }),
     {
       name: 'lifeos-personalization',
+      storage: getNamespacedStorage(),
     }
   )
 )

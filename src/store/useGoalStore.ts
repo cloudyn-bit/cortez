@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { getNamespacedStorage } from '@/lib/storage'
 import { Goal, Milestone } from '@/types/goal'
 import { triggerCompletionCelebration } from '@/lib/goals/celebration'
 
@@ -170,6 +171,7 @@ export const useGoalStore = create<GoalState>()(
     }),
     {
       name: 'lifeos-goals-storage',
+      storage: getNamespacedStorage(),
     }
   )
 )

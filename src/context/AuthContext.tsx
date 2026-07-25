@@ -1,98 +1,159 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
+import { User } from '@supabase/supabase-js'
 
-export interface MockUser {
+// We map Supabase User to a generic interface to avoid breaking other components if they expect `user_metadata`
+export interface AppUser {
   id: string
-  email: string
-  user_metadata: {
-    full_name: string
+  email?: string
+  user_metadata?: {
+    full_name?: string
   }
 }
 
 interface AuthContextType {
-  user: MockUser | null
+  user: AppUser | null
   loading: boolean
   isDemoUser: boolean
   signInWithEmail: (email: string, password?: string) => Promise<{ error: Error | null }>
   signUpWithEmail: (email: string, password?: string) => Promise<{ error: Error | null }>
   signInAsGuest: () => void
   signOut: () => Promise<void>
+  resetPasswordForEmail: (email: string) => Promise<{ error: Error | null }>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<MockUser | null>(null)
+  const [user, setUser] = useState<AppUser | null>(null)
   const [loading, setLoading] = useState<boolean>(true)
   const [isDemoUser, setIsDemoUser] = useState<boolean>(false)
 
   useEffect(() => {
-    // Check local storage for persistent session
-    const savedUserStr = localStorage.getItem('lifeos_user_session')
-    if (savedUserStr) {
-      try {
-        const savedUser = JSON.parse(savedUserStr) as MockUser
-        setUser(savedUser)
-        if (savedUser.id === 'guest-user-123') {
-          setIsDemoUser(true)
+    // Read session from Supabase initially
+    const getSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session?.user) {
+        handleUserLogin(session.user)
+      } else {
+        // If no supabase session, check if they were in guest mode
+        const savedUserId = localStorage.getItem('lifeos_current_user_id')
+        if (savedUserId === 'guest-user-123') {
+          handleGuestLogin()
         }
-      } catch (err) {
-        console.error('Failed to parse user session', err)
       }
+      setLoading(false)
     }
-    setLoading(false)
+
+    getSession()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (session?.user) {
+        handleUserLogin(session.user)
+      } else {
+        // Only clear if not guest
+        const savedUserId = localStorage.getItem('lifeos_current_user_id')
+        if (savedUserId !== 'guest-user-123') {
+          handleUserLogout()
+        }
+      }
+    })
+
+    return () => {
+      subscription.unsubscribe()
+    }
   }, [])
 
-  const persistUser = (newUser: MockUser, isGuest = false) => {
-    localStorage.setItem('lifeos_user_session', JSON.stringify(newUser))
-    setUser(newUser)
-    setIsDemoUser(isGuest)
-  }
-
-  const signInWithEmail = async (email: string, _password?: string) => {
-    setLoading(true)
-    // Simulate network delay for premium feel
-    await new Promise((resolve) => setTimeout(resolve, 800))
-    
-    // Accept any login for MVP local auth
-    const mockUser: MockUser = {
-      id: `user-${Date.now()}`,
-      email,
-      user_metadata: { full_name: email.split('@')[0] }
+  const handleUserLogin = (supabaseUser: User) => {
+    const appUser: AppUser = {
+      id: supabaseUser.id,
+      email: supabaseUser.email,
+      user_metadata: supabaseUser.user_metadata,
     }
     
-    persistUser(mockUser)
-    setLoading(false)
-    return { error: null }
-  }
-
-  const signUpWithEmail = async (email: string, _password?: string) => {
-    setLoading(true)
-    await new Promise((resolve) => setTimeout(resolve, 800))
-    
-    const mockUser: MockUser = {
-      id: `user-${Date.now()}`,
-      email,
-      user_metadata: { full_name: email.split('@')[0] }
+    // Check if user changed to reload stores
+    const currentId = localStorage.getItem('lifeos_current_user_id')
+    if (currentId && currentId !== 'guest-user-123' && currentId !== appUser.id) {
+      localStorage.setItem('lifeos_current_user_id', appUser.id)
+      window.location.reload()
+    } else {
+      localStorage.setItem('lifeos_current_user_id', appUser.id)
     }
-    
-    persistUser(mockUser)
-    setLoading(false)
-    return { error: null }
+
+    setUser(appUser)
+    setIsDemoUser(false)
   }
 
-  const signInAsGuest = () => {
-    const guestUser: MockUser = {
+  const handleGuestLogin = () => {
+    const guestUser: AppUser = {
       id: 'guest-user-123',
       email: 'guest@lifeos.app',
       user_metadata: { full_name: 'Guest User' }
     }
-    persistUser(guestUser, true)
+    
+    const currentId = localStorage.getItem('lifeos_current_user_id')
+    if (currentId !== 'guest-user-123') {
+      localStorage.setItem('lifeos_current_user_id', guestUser.id)
+      // Only reload if we were previously logged in as someone else
+      if (currentId && currentId !== guestUser.id) {
+        window.location.reload()
+      }
+    }
+    
+    setUser(guestUser)
+    setIsDemoUser(true)
+  }
+
+  const handleUserLogout = () => {
+    const currentId = localStorage.getItem('lifeos_current_user_id')
+    localStorage.removeItem('lifeos_current_user_id')
+    setUser(null)
+    setIsDemoUser(false)
+    
+    if (currentId && currentId !== 'guest-user-123') {
+       window.location.href = '/login'
+    }
+  }
+
+  const signInWithEmail = async (email: string, password?: string) => {
+    setLoading(true)
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password: password || '',
+    })
+    setLoading(false)
+    return { error }
+  }
+
+  const signUpWithEmail = async (email: string, password?: string) => {
+    setLoading(true)
+    const { error } = await supabase.auth.signUp({
+      email,
+      password: password || '',
+    })
+    setLoading(false)
+    return { error }
+  }
+
+  const resetPasswordForEmail = async (email: string) => {
+    setLoading(true)
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/login`,
+    })
+    setLoading(false)
+    return { error }
+  }
+
+  const signInAsGuest = () => {
+    handleGuestLogin()
   }
 
   const signOut = async () => {
-    localStorage.removeItem('lifeos_user_session')
-    setUser(null)
-    setIsDemoUser(false)
+    if (isDemoUser) {
+      handleUserLogout()
+    } else {
+      await supabase.auth.signOut()
+    }
   }
 
   return (
@@ -104,7 +165,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signInWithEmail,
         signUpWithEmail,
         signInAsGuest,
-        signOut
+        signOut,
+        resetPasswordForEmail
       }}
     >
       {children}

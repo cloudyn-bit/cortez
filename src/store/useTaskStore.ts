@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { getNamespacedStorage } from '@/lib/storage'
 import { Task, TaskFilterOptions, TaskPriority } from '@/types/task'
 
 interface TaskState {
@@ -82,6 +83,7 @@ export const useTaskStore = create<TaskState>()(
     }),
     {
       name: 'lifeos-tasks-storage',
+      storage: getNamespacedStorage(),
     }
   )
 )

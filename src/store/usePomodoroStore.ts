@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { getNamespacedStorage } from '@/lib/storage'
 import { TimerMode, PomodoroSettings, PomodoroStats } from '@/types/pomodoro'
 import { playTimerCompletionChime, sendBrowserNotification } from '@/lib/pomodoro/audio'
 
@@ -203,6 +204,7 @@ export const usePomodoroStore = create<PomodoroState>()(
     }),
     {
       name: 'lifeos-pomodoro-storage',
+      storage: getNamespacedStorage(),
       // Exclude running timer tick state from persistence so reloads don't leave zombie active timers
       partialize: (state) => ({
         settings: state.settings,

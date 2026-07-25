@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { getNamespacedStorage } from '@/lib/storage'
 import { Note } from '@/types/note'
 
 interface NoteState {
@@ -78,6 +79,7 @@ export const useNoteStore = create<NoteState>()(
     }),
     {
       name: 'lifeos-notes-storage',
+      storage: getNamespacedStorage(),
     }
   )
 )
