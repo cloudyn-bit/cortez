@@ -22,8 +22,10 @@ import {
   X,
   Palette,
   ArrowRight,
-  Star
+  Star,
+  Sparkles
 } from 'lucide-react'
+import { SecretNoteModal } from './SecretNoteModal'
 
 interface CommandPaletteProps {
   isOpen: boolean
@@ -34,7 +36,7 @@ interface CommandPaletteProps {
   onOpenNoteModal?: () => void
 }
 
-type PaletteItemCategory = 'Favorites' | 'Recent' | 'Quick Actions' | 'Navigation' | 'Tasks' | 'Habits' | 'Goals' | 'Notes' | 'Commands' | 'Instant Create'
+type PaletteItemCategory = 'Favorites' | 'Recent' | 'Quick Actions' | 'Navigation' | 'Tasks' | 'Habits' | 'Goals' | 'Notes' | 'Commands' | 'Instant Create' | 'Secret'
 
 interface PaletteItem {
   id: string
@@ -56,6 +58,7 @@ export function CommandPalette({
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [isSecretModalOpen, setIsSecretModalOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   
   const { setTheme } = useTheme()
@@ -188,6 +191,23 @@ export function CommandPalette({
       ]
 
       if (qLower) {
+        const secretKeywords = ['secret', 'secret note', 'about developer', 'developer', 'creator']
+        const matchesSecret = secretKeywords.includes(qLower) || 
+          ['secret', 'developer', 'creator'].some(term => qLower.length >= 4 && qLower.includes(term))
+
+        if (matchesSecret) {
+          items.push({
+            id: 'secret-note-command',
+            title: '📜 Secret Note from the Developer',
+            category: 'Secret',
+            icon: Sparkles,
+            action: () => {
+              onClose()
+              setIsSecretModalOpen(true)
+            }
+          })
+        }
+
         items.push(...coreItems.filter(i => i.title.toLowerCase().includes(qLower)))
         
         // Search through Data Stores
@@ -261,8 +281,9 @@ export function CommandPalette({
   }
 
   return (
-    <AnimatePresence>
-      {isOpen && (
+    <>
+      <AnimatePresence>
+        {isOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center pt-[5vh] pb-[15vh] p-4 pointer-events-auto">
           {/* Backdrop Blur */}
           <motion.div
@@ -411,5 +432,11 @@ export function CommandPalette({
         </div>
       )}
     </AnimatePresence>
+
+    <SecretNoteModal
+      isOpen={isSecretModalOpen}
+      onClose={() => setIsSecretModalOpen(false)}
+    />
+    </>
   )
 }
