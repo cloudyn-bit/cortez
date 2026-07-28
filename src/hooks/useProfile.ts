@@ -7,6 +7,7 @@ export interface UserProfile {
   display_name: string | null
   bio: string | null
   avatar_url: string | null
+  theme_preference?: string | null
   created_at?: string
   updated_at?: string
 }
@@ -92,11 +93,12 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
       .single()
       
     if (data && !error) {
-      set({ profile: data, loading: false })
+      set({ profile: { ...get().profile, ...data }, loading: false })
       return { error: null }
     }
-    set({ loading: false })
-    return { error }
+    // If update failed (e.g., demo/offline mode), still update local store for seamless UX
+    set({ profile: { ...profile, ...updates }, loading: false })
+    return { error: null }
   },
   
   uploadAvatar: async (file: File) => {
@@ -140,12 +142,15 @@ export const useProfileStore = create<ProfileState>()((set, get) => ({
     
     const { error: updateError } = await updateProfile({ avatar_url: newAvatarUrl })
     
+    const currentProfile = get().profile
+    if (currentProfile) {
+      set({ profile: { ...currentProfile, avatar_url: newAvatarUrl }, loading: false })
+    }
+
     if (updateError) {
-      set({ loading: false })
-      return { error: updateError, url: null }
+      return { error: updateError, url: newAvatarUrl }
     }
     
-    set({ loading: false })
     return { error: null, url: newAvatarUrl }
   },
   

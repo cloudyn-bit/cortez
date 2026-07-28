@@ -1,4 +1,4 @@
-import { useEffect, Suspense } from 'react'
+import React, { useEffect, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import { AuthProvider } from '@/context/AuthContext'
@@ -6,21 +6,25 @@ import { PersonalizationProvider } from '@/context/PersonalizationProvider'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 import { DashboardLayout } from '@/components/layout/DashboardLayout'
 import { usePomodoroStore } from '@/store/usePomodoroStore'
+import { useToastStore } from '@/store/useToastStore'
+import { ToastContainer } from '@/components/ui/ToastContainer'
 import { Loader2 } from 'lucide-react'
 
-// Eager imports for seamless shared layout animations (zero loading screens)
+// Eager imports for immediate landing & dashboard initialization
 import { LandingPage } from '@/pages/LandingPage'
 import { LoginPage } from '@/pages/LoginPage'
 import { DashboardPage } from '@/pages/DashboardPage'
-import { AnalyticsPage } from '@/pages/AnalyticsPage'
-import { PomodoroPage } from '@/pages/PomodoroPage'
-import { NotesPage } from '@/pages/NotesPage'
-import { GoalsPage } from '@/pages/GoalsPage'
-import { TasksPage } from '@/pages/TasksPage'
-import { HabitsPage } from '@/pages/HabitsPage'
-import { SettingsPage } from '@/pages/SettingsPage'
-import { PersonalizationPage } from '@/pages/PersonalizationPage'
-import { NotFoundPage } from '@/pages/NotFoundPage'
+
+// Lazy loaded secondary pages for optimized bundle size & high performance
+const AnalyticsPage = React.lazy(() => import('@/pages/AnalyticsPage').then(m => ({ default: m.AnalyticsPage })))
+const PomodoroPage = React.lazy(() => import('@/pages/PomodoroPage').then(m => ({ default: m.PomodoroPage })))
+const NotesPage = React.lazy(() => import('@/pages/NotesPage').then(m => ({ default: m.NotesPage })))
+const GoalsPage = React.lazy(() => import('@/pages/GoalsPage').then(m => ({ default: m.GoalsPage })))
+const TasksPage = React.lazy(() => import('@/pages/TasksPage').then(m => ({ default: m.TasksPage })))
+const HabitsPage = React.lazy(() => import('@/pages/HabitsPage').then(m => ({ default: m.HabitsPage })))
+const SettingsPage = React.lazy(() => import('@/pages/SettingsPage').then(m => ({ default: m.SettingsPage })))
+const PersonalizationPage = React.lazy(() => import('@/pages/PersonalizationPage').then(m => ({ default: m.PersonalizationPage })))
+const NotFoundPage = React.lazy(() => import('@/pages/NotFoundPage').then(m => ({ default: m.NotFoundPage })))
 
 function GlobalTimerLoop() {
   const tick = usePomodoroStore((state) => state.tick)
@@ -35,6 +39,36 @@ function GlobalTimerLoop() {
 
     return () => clearInterval(interval)
   }, [isRunning, tick])
+
+  return null
+}
+
+function NetworkMonitor() {
+  useEffect(() => {
+    const handleOffline = () => {
+      useToastStore.getState().addToast({
+        title: 'Offline Mode Activated',
+        message: 'Network connection lost. Changes will continue seamlessly in offline cache.',
+        type: 'warning',
+        duration: 6000
+      })
+    }
+    const handleOnline = () => {
+      useToastStore.getState().addToast({
+        title: 'Online',
+        message: 'Network connection restored.',
+        type: 'success',
+        duration: 3000
+      })
+    }
+
+    window.addEventListener('offline', handleOffline)
+    window.addEventListener('online', handleOnline)
+    return () => {
+      window.removeEventListener('offline', handleOffline)
+      window.removeEventListener('online', handleOnline)
+    }
+  }, [])
 
   return null
 }
@@ -92,6 +126,8 @@ export function App() {
       <PersonalizationProvider>
         <AuthProvider>
           <GlobalTimerLoop />
+          <NetworkMonitor />
+          <ToastContainer />
           <Suspense fallback={<PageLoadingFallback />}>
             <AnimatedRoutes />
           </Suspense>

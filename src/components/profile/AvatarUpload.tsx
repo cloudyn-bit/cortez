@@ -196,7 +196,12 @@ export function AvatarUpload() {
           onDrop={handleDrop}
         >
           {previewUrl ? (
-            <img src={previewUrl} alt="Avatar" className="w-full h-full object-cover" />
+            <img 
+              src={previewUrl} 
+              alt="Avatar" 
+              className="w-full h-full object-cover" 
+              onError={() => setPreviewUrl(null)} 
+            />
           ) : (
             <ImageIcon className="w-10 h-10 text-muted-foreground/50" />
           )}

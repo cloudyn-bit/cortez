@@ -16,10 +16,12 @@ function DockIcon({
   mouseX,
   icon: Icon,
   href,
+  title,
 }: {
   mouseX: MotionValue
   icon: React.ElementType
   href: string
+  title: string
 }) {
   const ref = useRef<HTMLButtonElement>(null)
   const navigate = useNavigate()
@@ -31,7 +33,7 @@ function DockIcon({
     return val - bounds.x - bounds.width / 2
   })
 
-  const widthSync = useTransform(distance, [-100, 0, 100], [40, 60, 40])
+  const widthSync = useTransform(distance, [-100, 0, 100], [44, 62, 44])
   const width = useSpring(widthSync, { mass: 0.1, stiffness: 150, damping: 12 })
 
   return (
@@ -39,14 +41,15 @@ function DockIcon({
       ref={ref}
       style={{ width, height: width }}
       onClick={() => navigate(href)}
+      aria-label={title}
       className={cn(
-        "relative flex aspect-square items-center justify-center rounded-full transition-colors",
+        "relative flex aspect-square items-center justify-center rounded-2xl min-w-[44px] min-h-[44px] transition-all shadow-sm",
         isActive 
-          ? "bg-primary/20 text-primary border border-primary/30" 
-          : "bg-secondary/50 text-muted-foreground hover:bg-secondary border border-transparent"
+          ? "bg-primary/20 text-primary border border-primary/40 shadow-[0_0_12px_hsl(var(--primary)/0.3)]" 
+          : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground border border-border/40"
       )}
     >
-      <Icon className="h-1/2 w-1/2" />
+      <Icon className="h-5 w-5 shrink-0" />
     </motion.button>
   )
 }
@@ -57,14 +60,14 @@ export function Dock({ items, className }: DockProps) {
   return (
     <div
       className={cn(
-        "fixed bottom-4 left-1/2 -translate-x-1/2 z-50 md:hidden",
+        "fixed bottom-3 left-1/2 -translate-x-1/2 z-50 md:hidden max-w-[95vw] pb-safe",
         className
       )}
     >
       <motion.div
         onMouseMove={(e) => mouseX.set(e.pageX)}
         onMouseLeave={() => mouseX.set(Infinity)}
-        className="flex h-16 items-end gap-2 rounded-2xl border border-border/40 bg-background/60 p-2 pb-2 shadow-xl backdrop-blur-xl"
+        className="flex h-16 items-center gap-2 rounded-2xl border border-border/60 bg-card/85 px-3 shadow-2xl backdrop-blur-2xl"
       >
         {items.map((item) => (
           <DockIcon mouseX={mouseX} key={item.title} {...item} />

@@ -5,6 +5,7 @@ import { Note } from '@/types/note'
 import { PomodoroStats } from '@/types/pomodoro'
 import { calculateStreakStats } from '@/lib/habits/streak'
 import { UserProfile } from '@/hooks/useProfile'
+import { getUserDisplayName } from '@/lib/user'
 
 export interface CortezSuggestion {
   label: string
@@ -42,15 +43,7 @@ export function evaluateCortezContext(
     timeGreeting = 'Working late tonight'
   }
 
-  let name = ''
-  if (profile) {
-    name = profile.display_name || profile.username || ''
-  }
-  
-  if (!name && profile) {
-    // Edge case if username is somehow empty (shouldn't be, but just in case)
-    // we don't have email in profile, so we'll fallback to nothing.
-  }
+  const name = profile ? getUserDisplayName(profile, null, false) : ''
 
   let greeting = name ? `${timeGreeting}, ${name}.` : `${timeGreeting}.`
   if (timeGreeting === 'Working late tonight') {

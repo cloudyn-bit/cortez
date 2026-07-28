@@ -280,18 +280,19 @@ export function CommandPalette({
             initial="hidden"
             animate="visible"
             exit="exit"
-            className="relative z-50 w-full max-w-2xl bg-card/60 backdrop-blur-3xl border border-border/50 rounded-2xl shadow-[0_0_80px_rgba(var(--primary),0.15)] overflow-hidden"
+            className="relative z-50 w-full max-w-2xl bg-card/95 backdrop-blur-3xl border border-border/60 rounded-2xl shadow-[0_0_80px_rgba(var(--primary),0.15)] overflow-hidden"
           >
             {/* Search Input Header */}
-            <div className="flex items-center px-4 border-b border-border/40 relative bg-background/30">
+            <div className="flex items-center px-4 border-b border-border/40 relative bg-background/50">
               <Search className="h-5 w-5 text-primary mr-3 shrink-0" />
               <Input
                 ref={inputRef}
+                aria-label="Command Palette Search"
                 placeholder="Type a command, search routes, or 'task ...' to create"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={handleKeyDown}
-                className="h-16 border-none bg-transparent text-lg focus-visible:ring-0 shadow-none placeholder:text-muted-foreground/50 text-foreground"
+                className="h-16 border-none bg-transparent text-lg focus-visible:ring-0 shadow-none placeholder:text-muted-foreground/60 text-foreground"
               />
               {query && (
                 <button 

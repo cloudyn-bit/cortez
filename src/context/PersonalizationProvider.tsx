@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react'
 import { usePersonalizationStore } from '@/store/usePersonalizationStore'
+import { useTheme } from '@/context/ThemeProvider'
 
 export function PersonalizationProvider({ children }: { children: React.ReactNode }) {
+  const { theme } = useTheme()
   const {
     themePreset,
     accentColor,
@@ -68,43 +70,86 @@ export function PersonalizationProvider({ children }: { children: React.ReactNod
     const densities = { compact: '0.75', comfort: '1', spacious: '1.25' }
     root.style.setProperty('--density', densities[density])
 
-    // Theme Preset base backgrounds (Deep Charcoal, Graphite, Midnight Blue, etc.)
-    switch (themePreset) {
-      case 'Aurora':
-        root.style.setProperty('--background', '240 6% 2.5%') // Deep Charcoal
-        root.style.setProperty('--card-base', '240 6% 4.5%')
-        break
-      case 'Midnight':
-        root.style.setProperty('--background', '222 47% 4%') // Midnight Blue
-        root.style.setProperty('--card-base', '222 47% 6%')
-        break
-      case 'Ocean':
-        root.style.setProperty('--background', '200 50% 3%') // Deep Teal
-        root.style.setProperty('--card-base', '200 50% 5%')
-        break
-      case 'Carbon':
-        root.style.setProperty('--background', '0 0% 5%') // Graphite
-        root.style.setProperty('--card-base', '0 0% 8%')
-        break
-      case 'Glass':
-        root.style.setProperty('--background', '280 20% 5%') // Deep Purple Glass
-        root.style.setProperty('--card-base', '280 20% 8%')
-        break
-      case 'Nebula':
-        root.style.setProperty('--background', '260 40% 4%') // Deep Magenta/Indigo
-        root.style.setProperty('--card-base', '260 40% 6%')
-        break
-      case 'Minimal':
-        root.style.setProperty('--background', '0 0% 2%') // Almost Black
-        root.style.setProperty('--card-base', '0 0% 4%')
-        break
-      default:
-        root.style.setProperty('--background', '240 6% 2.5%')
-        root.style.setProperty('--card-base', '240 6% 4.5%')
-        break
+    // Determine effective theme mode
+    let isLight = theme === 'light'
+    if (theme === 'system') {
+      isLight = !window.matchMedia('(prefers-color-scheme: dark)').matches
     }
 
-  }, [themePreset, accentColor, glassIntensity, backgroundIntensity, cornerRadius, animationSpeed, density])
+    // Theme Preset base backgrounds
+    if (isLight) {
+      switch (themePreset) {
+        case 'Aurora':
+          root.style.setProperty('--background', '240 20% 98%')
+          root.style.setProperty('--card-base', '240 15% 93%')
+          break
+        case 'Midnight':
+          root.style.setProperty('--background', '222 30% 97%')
+          root.style.setProperty('--card-base', '222 25% 92%')
+          break
+        case 'Ocean':
+          root.style.setProperty('--background', '200 35% 97%')
+          root.style.setProperty('--card-base', '200 30% 92%')
+          break
+        case 'Carbon':
+          root.style.setProperty('--background', '0 0% 98%')
+          root.style.setProperty('--card-base', '0 0% 93%')
+          break
+        case 'Glass':
+          root.style.setProperty('--background', '280 20% 98%')
+          root.style.setProperty('--card-base', '280 18% 94%')
+          break
+        case 'Nebula':
+          root.style.setProperty('--background', '260 25% 97%')
+          root.style.setProperty('--card-base', '260 20% 92%')
+          break
+        case 'Minimal':
+          root.style.setProperty('--background', '0 0% 99%')
+          root.style.setProperty('--card-base', '0 0% 96%')
+          break
+        default:
+          root.style.setProperty('--background', '240 20% 98%')
+          root.style.setProperty('--card-base', '240 15% 93%')
+          break
+      }
+    } else {
+      switch (themePreset) {
+        case 'Aurora':
+          root.style.setProperty('--background', '240 6% 2.5%')
+          root.style.setProperty('--card-base', '240 6% 4.5%')
+          break
+        case 'Midnight':
+          root.style.setProperty('--background', '222 47% 4%')
+          root.style.setProperty('--card-base', '222 47% 6%')
+          break
+        case 'Ocean':
+          root.style.setProperty('--background', '200 50% 3%')
+          root.style.setProperty('--card-base', '200 50% 5%')
+          break
+        case 'Carbon':
+          root.style.setProperty('--background', '0 0% 5%')
+          root.style.setProperty('--card-base', '0 0% 8%')
+          break
+        case 'Glass':
+          root.style.setProperty('--background', '280 20% 5%')
+          root.style.setProperty('--card-base', '280 20% 8%')
+          break
+        case 'Nebula':
+          root.style.setProperty('--background', '260 40% 4%')
+          root.style.setProperty('--card-base', '260 40% 6%')
+          break
+        case 'Minimal':
+          root.style.setProperty('--background', '0 0% 2%')
+          root.style.setProperty('--card-base', '0 0% 4%')
+          break
+        default:
+          root.style.setProperty('--background', '240 6% 2.5%')
+          root.style.setProperty('--card-base', '240 6% 4.5%')
+          break
+      }
+    }
+
+  }, [theme, themePreset, accentColor, glassIntensity, backgroundIntensity, cornerRadius, animationSpeed, density])
 
   return <>{children}</>
 }

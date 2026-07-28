@@ -200,7 +200,7 @@ export function LoginPage() {
 
   return (
     <motion.div 
-      className="min-h-screen bg-[#020203] flex flex-col items-center justify-center p-4 sm:p-6 overflow-hidden"
+      className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4 sm:p-6 overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}

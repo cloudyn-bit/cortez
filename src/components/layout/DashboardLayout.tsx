@@ -57,7 +57,7 @@ export function DashboardLayout() {
     <motion.div 
       layoutId="auth-card"
       transition={{ type: "spring", stiffness: 100, damping: 20, mass: 1 }}
-      className="min-h-screen bg-[#020203] flex flex-col relative"
+      className="min-h-screen bg-background text-foreground flex flex-col relative"
     >
       {/* Non-intrusive reminder banner */}
       <CortezReminderBanner />
@@ -68,14 +68,14 @@ export function DashboardLayout() {
         onOpenCommandPalette={() => setIsPaletteOpen(true)}
       />
 
-      <div className="flex flex-1 overflow-hidden relative z-10 pb-16 md:pb-0">
-        <div className="hidden md:block">
+      <div className="flex flex-1 overflow-hidden relative z-10 pb-20 md:pb-0">
+        <div className="hidden md:block shrink-0">
           <Sidebar
             isOpen={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
           />
         </div>
-        <main className="flex-1 overflow-y-auto relative">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden relative">
           <LayoutGroup>
             <AnimatePresence mode="popLayout">
               {outlet && React.cloneElement(outlet, { key: location.pathname })}

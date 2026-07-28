@@ -27,9 +27,9 @@ export function UserAvatar({
   }, [avatarUrl])
 
   const getFallbackInitial = () => {
-    if (displayName) return displayName.charAt(0).toUpperCase()
-    if (username) return username.charAt(0).toUpperCase()
-    if (email) return email.charAt(0).toUpperCase()
+    if (displayName && displayName.trim()) return displayName.trim().charAt(0).toUpperCase()
+    if (username && username.trim()) return username.trim().charAt(0).toUpperCase()
+    if (email && email.trim()) return email.trim().charAt(0).toUpperCase()
     return 'U'
   }
 

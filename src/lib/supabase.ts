@@ -8,6 +8,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(
-  supabaseUrl || 'https://dummy-project.supabase.co',
-  supabaseAnonKey || 'dummy-anon-key'
+  supabaseUrl || 'https://lifeos-demo.supabase.co',
+  supabaseAnonKey || 'demo-public-api-key'
 )

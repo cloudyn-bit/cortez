@@ -6,6 +6,7 @@ import { useTheme } from '@/context/ThemeProvider'
 import { useProfileStore } from '@/hooks/useProfile'
 import { NavbarMiniTimer } from '@/components/pomodoro/NavbarMiniTimer'
 import { UserAvatar } from '@/components/profile/UserAvatar'
+import { getUserDisplayName } from '@/lib/user'
 import { ArcReactorLogo } from '@/components/ui/ArcReactorLogo'
 import { Button } from '@/components/ui/button'
 import {
@@ -124,9 +125,7 @@ export function Navbar({ onToggleSidebar, isSidebarOpen, onOpenCommandPalette }:
                   size="sm"
                 />
                 <span className="max-w-[120px] truncate text-zinc-500 hidden sm:inline">
-                  {isDemoUser 
-                    ? 'Guest' 
-                    : (profile?.display_name || profile?.username || user.email?.split('@')[0])}
+                  {getUserDisplayName(profile, user, isDemoUser)}
                 </span>
               </button>
 
@@ -137,13 +136,11 @@ export function Navbar({ onToggleSidebar, isSidebarOpen, onOpenCommandPalette }:
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: -4, scale: 0.95 }}
                     transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
-                    className="absolute right-0 mt-2 w-52 rounded-xl border border-white/[0.06] bg-[#0a0a0c] p-1.5 shadow-2xl shadow-black/40 z-50"
+                    className="absolute right-0 mt-2 w-52 rounded-xl border border-border/60 bg-card p-1.5 shadow-2xl shadow-black/40 z-50"
                   >
                     <div className="px-3 py-2.5 border-b border-white/[0.04] text-xs mb-1">
                       <p className="font-semibold text-white truncate">
-                        {isDemoUser 
-                          ? 'Guest User' 
-                          : (profile?.display_name || profile?.username || user.email?.split('@')[0] || 'LifeOS User')}
+                        {getUserDisplayName(profile, user, isDemoUser)}
                       </p>
                       <p className="text-zinc-600 truncate text-[11px]">{user.email}</p>
                       {isDemoUser && (

@@ -122,7 +122,7 @@ export function LandingPage() {
 
   return (
     <motion.div 
-      className="relative w-full h-screen bg-[#020203] overflow-hidden flex flex-col items-center justify-center"
+      className="relative w-full h-screen bg-background overflow-hidden flex flex-col items-center justify-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0, transition: { duration: 0.8, ease: "easeInOut" } }}

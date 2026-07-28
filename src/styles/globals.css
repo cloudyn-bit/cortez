@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --background: 240 6% 2.5%; /* Default dark */
+  :root, .dark {
+    --background: 240 6% 2.5%;
     --foreground: 0 0% 96%;
     --card-base: 240 6% 4.5%;
     
@@ -32,6 +32,28 @@
     --destructive-foreground: 0 0% 96%;
     --border: 240 4% 12%;
     --input: 240 4% 12%;
+    --ring: var(--accent-color);
+  }
+
+  .light {
+    --background: 240 20% 98%;
+    --foreground: 240 10% 10%;
+    --card-base: 240 15% 94%;
+    
+    --card: var(--card-base);
+    --card-foreground: 240 10% 10%;
+    --primary: var(--accent-color);
+    --primary-foreground: 0 0% 100%;
+    --secondary: 240 5% 90%;
+    --secondary-foreground: 240 10% 15%;
+    --muted: 240 5% 88%;
+    --muted-foreground: 240 5% 45%;
+    --accent: 240 5% 88%;
+    --accent-foreground: 240 10% 15%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 6% 85%;
+    --input: 240 6% 85%;
     --ring: var(--accent-color);
   }
 }
@@ -63,11 +85,17 @@
   background-color: hsla(var(--card-base) / var(--glass-opacity));
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
-  /* Inner highlights for premium glass feel */
   box-shadow: inset 0 1px 1px hsla(0, 0%, 100%, 0.1), 
               inset 0 0 0 1px hsla(0, 0%, 100%, 0.03),
               0 8px 32px 0 rgba(0, 0, 0, 0.3);
   border-radius: var(--radius);
+}
+
+.light .glass-panel {
+  background-color: hsla(var(--card-base) / calc(var(--glass-opacity) * 4));
+  box-shadow: inset 0 1px 2px hsla(0, 0%, 100%, 0.8), 
+              inset 0 0 0 1px hsla(0, 0%, 0%, 0.06),
+              0 8px 32px 0 rgba(0, 0, 0, 0.06);
 }
 
 .glass-button {
@@ -75,6 +103,13 @@
   backdrop-filter: blur(var(--glass-blur));
   box-shadow: inset 0 1px 1px hsla(0, 0%, 100%, 0.15),
               inset 0 0 0 1px hsla(0, 0%, 100%, 0.05);
+}
+
+.light .glass-button {
+  background-color: hsla(var(--card-base) / 0.8);
+  box-shadow: inset 0 1px 2px hsla(0, 0%, 100%, 0.9),
+              inset 0 0 0 1px hsla(0, 0%, 0%, 0.08),
+              0 4px 12px 0 rgba(0, 0, 0, 0.05);
 }
 
 /* ═══════════════════════════════════════

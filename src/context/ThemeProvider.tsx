@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react"
 import { getCurrentUserId } from "@/lib/storage"
+import { useProfileStore } from "@/hooks/useProfile"
 
 type Theme = "dark" | "light" | "system"
 
@@ -27,9 +28,21 @@ export function ThemeProvider({
   storageKey = "lifeos-theme",
   ...props
 }: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(
+  const [theme, setThemeState] = useState<Theme>(
     () => (localStorage.getItem(`${storageKey}_${getCurrentUserId()}`) as Theme) || defaultTheme
   )
+
+  const profile = useProfileStore((state) => state.profile)
+
+  // Sync theme from profile when fetched or updated
+  useEffect(() => {
+    if (profile?.theme_preference && ['dark', 'light', 'system'].includes(profile.theme_preference)) {
+      if (profile.theme_preference !== theme) {
+        setThemeState(profile.theme_preference as Theme)
+        localStorage.setItem(`${storageKey}_${getCurrentUserId()}`, profile.theme_preference)
+      }
+    }
+  }, [profile?.theme_preference])
 
   useEffect(() => {
     const root = window.document.documentElement
@@ -51,9 +64,15 @@ export function ThemeProvider({
 
   const value = {
     theme,
-    setTheme: (theme: Theme) => {
-      localStorage.setItem(`${storageKey}_${getCurrentUserId()}`, theme)
-      setTheme(theme)
+    setTheme: (newTheme: Theme) => {
+      localStorage.setItem(`${storageKey}_${getCurrentUserId()}`, newTheme)
+      setThemeState(newTheme)
+      
+      // Try updating in Supabase if user is logged in
+      const currentProfile = useProfileStore.getState().profile
+      if (currentProfile && currentProfile.id !== 'guest-user-123') {
+        useProfileStore.getState().updateProfile({ theme_preference: newTheme } as any).catch(() => {})
+      }
     },
   }
 
